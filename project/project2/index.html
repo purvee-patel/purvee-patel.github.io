@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Purvee Patel" />
+    
+    <link rel="shortcut icon" type="image/x-icon" href="../../img/favicon.ico">
+    <title>Project 2: Modeling, Testing, and Predicting</title>
+    <meta name="generator" content="Hugo 0.79.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../../css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="../../"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="../../post/">BLOG</a></li>
+        
+        <li><a href="../../projects/">PROJECTS</a></li>
+        
+        <li><a href="../../resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="../../project/project2/">Project 2: Modeling, Testing, and Predicting</a></strong>
+          </h3>
+        </div>
+ 
+<div class="blog-title">
+          <h4>
+         November 25, 2020 
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<div id="modeling" class="section level1">
+<h1>Modeling</h1>
+<div id="introduction-5-pts" class="section level2">
+<h2>0. Introduction (5 pts)</h2>
+<pre class="r"><code>library(dplyr) 
+library(tidyverse) 
+library(ggplot2)
+library(sandwich) 
+library(lmtest) 
+library(glmnet) 
+library(vegan)
+
+Heart &lt;- read.csv(&quot;heart.csv&quot;)
+Heart &lt;- Heart %&gt;% mutate(thalrevised = case_when(thal==1 ~ &quot;normal&quot;,
+                                            thal==2 ~ &quot;fixed defect&quot;,
+                                            thal==3 ~ &quot;reversable defect&quot;)) #create categorical variable from original  thal variable
+Heart &lt;- Heart %&gt;% na.omit() #remove any potential NA values
+Heart &lt;- Heart[-c(2:3, 6:7, 9, 11:13)] #remove unneeded variables</code></pre>
+<p><em>This dataset contains data collected to look at the presence of heart disease in the observed patients across the following four databases: Cleveland, Hungary, Switzerland, and Long Beach V. There are originally 1025 total observations and 14 variables in this dataset. I removed the following variables from the original dataset as I wanted to work with a smaller, more concise group of variables that I was curious about: sex, cp(type of chest pain), fbs(fasting blood sugar above or below 120 mg/dl), restecg(resting electrocardiographic results with values 0,1,2), exang(exercised induced angina), slope(slope of the peak exercise ST segment), ca(number of major vessels, 0-3, colored by florouscopy). Further, I excluded these deleted variables as I did not find them all sufficiently necessary to include in order to complete the analyses below. The original dataset did not contain a categorical variable and so I created a new variable based on the original variable of &quot;thal&quot; called &quot;thalrevised&quot;, which is a categorical variable with the original value of 1 from &quot;thal&quot; attributed to &quot;normal&quot;, 2 from &quot;thal&quot; attributed to &quot;fixed defect&quot;, and 3 of &quot;thal&quot; attributed to &quot;reversable defect&quot;. With the addition of this new categorical variable the Heart dataset that is used below contains the following 7 variables: age, trestbps(resting blood pressure), chol (serum cholesterol in mg/dl), thalach (maximum heart rate achieved), oldpeak(ST depression induced by exervise), target(presence of heart disease in the patient), and thalrevised. Target is a binary variable in which the value of 0 is attributed to &quot;no disease&quot; and the value of 1 is attribtued to &quot;disease&quot;. Next, I ran code to remove any potential NA values, which left me with a dataset containing 1018 observations total. Lastly, I find this dataset interesting as it is related to the field of cardiology and contains biological/physiological data and measurements. I enjoy learning about cardiology and it is a relevant field to my family as I have a familial history of heart concerns on my father's side of the family.</em></p>
+</div>
+<div id="manova-testing-15-pts" class="section level2">
+<h2>1. MANOVA Testing (15 pts)</h2>
+<pre class="r"><code>man1&lt;-manova(cbind(trestbps,chol,thalach)~thalrevised, data=Heart)
+summary(man1) #reject the null hypothesis here</code></pre>
+<pre><code>## Df Pillai approx F num Df den Df Pr(&gt;F)
+## thalrevised 2 0.11432 20.491 6 2028 &lt; 2.2e-16 ***
+## Residuals 1015
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1</code></pre>
+<pre class="r"><code>summary.aov(man1) #all three of the response variables have significant differences                        </code></pre>
+<pre><code>## Response trestbps :
+## Df Sum Sq Mean Sq F value Pr(&gt;F)
+## thalrevised 2 6719 3359.3 11.092 1.716e-05 ***
+## Residuals 1015 307389 302.8
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1
+##
+## Response chol :
+## Df Sum Sq Mean Sq F value Pr(&gt;F)
+## thalrevised 2 25642 12820.8 4.8372 0.008113 **
+## Residuals 1015 2690207 2650.5
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1
+##
+## Response thalach :
+## Df Sum Sq Mean Sq F value Pr(&gt;F)
+## thalrevised 2 46100 23050.2 47.535 &lt; 2.2e-16 ***
+## Residuals 1015 492179 484.9
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1</code></pre>
+<pre class="r"><code>Heart%&gt;%group_by(thalrevised)%&gt;%summarize(mean(trestbps),mean(chol), mean(thalach))</code></pre>
+<pre><code>## # A tibble: 3 x 4
+## thalrevised `mean(trestbps)` `mean(chol)`
+`mean(thalach)`
+## &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 fixed defect 129.  245.  155.
+## 2 normal 137.  229.  136.
+## 3 reversable defect 134.  250.  143.</code></pre>
+<pre class="r"><code>pairwise.t.test(Heart$trestbps,Heart$thalrevised, p.adj=&quot;none&quot;) </code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  Heart$trestbps and Heart$thalrevised 
+## 
+##                   fixed defect normal
+## normal            0.0012       -     
+## reversable defect 6.1e-05      0.2191
+## 
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>pairwise.t.test(Heart$chol,Heart$thalrevised, p.adj=&quot;none&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  Heart$chol and Heart$thalrevised 
+## 
+##                   fixed defect normal
+## normal            0.0157       -     
+## reversable defect 0.1631       0.0023
+## 
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>pairwise.t.test(Heart$thalach,Heart$thalrevised, p.adj=&quot;none&quot;) </code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  Heart$thalach and Heart$thalrevised 
+## 
+##                   fixed defect normal
+## normal            4.9e-11      -     
+## reversable defect &lt; 2e-16      0.014 
+## 
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>1-0.95^9 #type 1 error rate</code></pre>
+<pre><code>## [1] 0.3697506</code></pre>
+<pre class="r"><code>0.05/13 #bonferroni correction</code></pre>
+<pre><code>## [1] 0.003846154</code></pre>
+<pre class="r"><code>#Looking at Assumptions
+library(rstatix)
+group &lt;- Heart$thalrevised
+DVs &lt;- Heart %&gt;% select(trestbps,chol,thalach)
+sapply(split(DVs,group), mshapiro_test) #assumption is violated as all of the p-values are &lt; 0.05</code></pre>
+<pre><code>##           fixed defect normal       reversable defect
+## statistic 0.9264215    0.9137643    0.893079         
+## p.value   1.128605e-15 0.0002755875 2.538146e-16</code></pre>
+<pre class="r"><code>box_m(DVs, group) #assumption with &quot;null=homogeneity of vcov mats assumption met)&quot; is violated</code></pre>
+<pre><code>## # A tibble: 1 x 4
+## statistic p.value parameter method
+## &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;
+## 1 50.6 0.00000109 12 Box&#39;s M-test for Homogeneity of
+Covariance Matrices</code></pre>
+<p><em>I performed 13 tests total (1 MANOVA, 3 ANOVAs, and 9 t tests) with a 0.3697506 type 1 error rate. With the bonferroni correction, the new alpha value is 0.003846154. The MANOVA results (F value of 20.491 and p-value of &lt; 2.2e-16) indicate that significant differences were found among the three effect levels (normal,fixed effect, and reversable effect) for at least one of the dependent variables (trestbps, chol, and thalach). The results of the ANOVA indicate that all three of the response variables have significant differences based on thalrevised (p-value of trestbps = 1.716e-05, p-value of chol = 0.008113, and p-value of thalach is &lt; 2.2e-16). With the new alpha value yielded from the bonferroni correction, the t tests indicate that for trestbps (resting BP) and thalach(maximum heart rate achieved), the effect levels that significantly differed were fixed defect with both normal and reversable defect. For, chol (serum cholesterol) on the other hand, the t tests indicate that with the new alpha value none of the effect levels different significantly. The assumption of multivariate normality for each group is violated as the p-values of all groups are &lt; 0.05. Running Box's M test here yields a p-value of 1.087015e-06, leading us to reject the null. Hence, the homogeneity of vcov mats assumption is violated as well.</em></p>
+</div>
+<div id="randomization-testing-15-pts" class="section level2">
+<h2>2. Randomization Testing (15 pts)</h2>
+<pre class="r"><code>#Using PERMANOVA
+library(vegan)
+dists&lt;-Heart%&gt;%select(trestbps, chol, thalach)%&gt;%dist()
+adonis(dists~thalrevised,data=Heart) #telling us to reject null hypothesis, there are differences</code></pre>
+<pre><code>##
+## Call:
+## adonis(formula = dists ~ thalrevised, data = Heart)
+##
+## Permutation: free
+## Number of permutations: 999
+##
+## Terms added sequentially (first to last)
+##
+## Df SumsOfSqs MeanSqs F.Model R2 Pr(&gt;F)
+## thalrevised 2 78461 39230 11.41 0.02199 0.001 ***
+## Residuals 1015 3489775 3438 0.97801
+## Total 1017 3568235 1.00000
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1</code></pre>
+<pre class="r"><code>table(Heart$thalrevised)</code></pre>
+<pre><code>## 
+##      fixed defect            normal reversable defect 
+##               544                64               410</code></pre>
+<pre class="r"><code>SST&lt;- sum(dists^2)/1018
+SSW&lt;-Heart%&gt;%group_by(thalrevised)%&gt;%select(thalrevised, trestbps,chol,thalach)%&gt;%
+  do(d=dist(.[-1],&quot;euclidean&quot;))%&gt;%ungroup()%&gt;%
+  summarize(sum(d[[1]]^2)/544 + sum(d[[2]]^2)/64+ sum(d[[3]]^2)/410)%&gt;%pull
+F_obs&lt;-((SST-SSW)/2)/(SSW/1015) #observed F statistic
+Fs&lt;-replicate(1000,{
+  new&lt;-Heart%&gt;%mutate(thalrevised=sample(thalrevised)) #permute the species vector
+  SSW&lt;-new%&gt;%group_by(thalrevised)%&gt;%select(thalrevised, trestbps, chol, thalach)%&gt;%
+    do(d=dist(.[-1],&quot;euclidean&quot;))%&gt;%ungroup()%&gt;%
+    summarize(sum(d[[1]]^2)/544 + sum(d[[2]]^2)/64+ sum(d[[3]]^2)/410)%&gt;%pull
+  ((SST-SSW)/2)/(SSW/1015) #calculate new F ratio on randomized data
+})
+{hist(Fs,prob = T); abline(v=F_obs, col=&quot;red&quot;, add=T)}</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-3-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>mean(Fs&gt;F_obs) #p-value very small: reject null hypothesis</code></pre>
+<pre><code>## [1] 0</code></pre>
+<p><em>The null hypothesis is that for trestbps(resting BP), chol(serum cholesterol), and thalach(maximum heart rate achieved), the means for each thalrevised (effect) are the same. The alternative hypothesis here is that for at least one of these variables, at least one thalrevised (effect) mean is different. The p-value of this PERMANOVA as indicated via both the adonis (p = 0.0001) as well as the handwritten code is very small, indicating that we can reject the null hypothesis.</em></p>
+</div>
+<div id="linear-regression-model-35-pts" class="section level2">
+<h2>3. Linear Regression Model (35 pts)</h2>
+<pre class="r"><code>Heart$age_c &lt;- Heart$age - mean(Heart$age)
+Heart$trestbps_c &lt;- Heart$trestbps - mean(Heart$trestbps)
+
+fit1 &lt;- lm(chol ~ age_c * trestbps_c, data = Heart)
+summary(fit1)</code></pre>
+<pre><code>##
+## Call:
+## lm(formula = chol ~ age_c * trestbps_c, data = Heart)
+##
+## Residuals:
+## Min 1Q Median 3Q Max
+## -128.188 -32.625 -4.488 27.816 301.142
+##
+## Coefficients:
+## Estimate Std. Error t value Pr(&gt;|t|)
+## (Intercept) 247.70051 1.64843 150.264 &lt; 2e-16 ***
+## age_c 1.04104 0.18216 5.715 1.44e-08 ***
+## trestbps_c 0.29391 0.09679 3.036 0.00246 **
+## age_c:trestbps_c -0.03343 0.01147 -2.915 0.00364 **
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1
+##
+## Residual standard error: 50.15 on 1014 degrees of
+freedom
+## Multiple R-squared: 0.06085, Adjusted R-squared: 0.05808
+## F-statistic: 21.9 on 3 and 1014 DF, p-value: 9.537e-14</code></pre>
+<pre class="r"><code>new1&lt;-Heart
+new1$age_c&lt;-mean(Heart$age_c)
+new1$mean&lt;-predict(fit1,new1)
+new1$age_c&lt;-mean(Heart$age_c)+sd(Heart$age_c)
+new1$plus.sd&lt;-predict(fit1,new1)
+new1$age_c&lt;-mean(Heart$age_c)-sd(Heart$age_c)
+new1$minus.sd&lt;-predict(fit1,new1)
+newint&lt;-new1%&gt;%select(chol,trestbps_c,mean,plus.sd,minus.sd)%&gt;%gather(age,value,-chol,-trestbps_c)
+
+mycols&lt;-c(&quot;#619CFF&quot;,&quot;#F8766D&quot;,&quot;#00BA38&quot;)
+names(mycols)&lt;-c(&quot;-1 sd&quot;,&quot;mean&quot;,&quot;+1 sd&quot;)
+mycols=as.factor(mycols)
+
+ggplot(Heart,aes(trestbps_c,chol),group=mycols)+geom_point()+geom_line(data=new1,aes(y=mean,color=&quot;mean&quot;))+geom_line(data=new1,aes(y=plus.sd,color=&quot;+1 sd&quot;))+geom_line(data=new1,aes(y=minus.sd,color=&quot;-1 sd&quot;))+scale_color_manual(values=mycols)+labs(color=&quot;age (cont)&quot;)+theme(legend.position=c(.9,.2))</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-4-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Looking at Linearity/Homoskedasticity
+resids &lt;- fit1$residuals
+fitvalues &lt;- fit1$fitted.values
+ggplot() + geom_point(aes(fitvalues, resids)) + geom_hline(yintercept = 0,
+    color = &quot;blue&quot;)</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-4-2.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Looking at Normality
+ggplot() + geom_qq(aes(sample = resids)) + geom_qq_line(aes(sample = resids))</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-4-3.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>coeftest(fit1, vcov = vcovHC(fit1))</code></pre>
+<pre><code>##
+## t test of coefficients:
+##
+## Estimate Std. Error t value Pr(&gt;|t|)
+## (Intercept) 247.700511 1.726506 143.4692 &lt; 2.2e-16 ***
+## age_c 1.041036 0.190182 5.4739 5.549e-08 ***
+## trestbps_c 0.293912 0.085734 3.4282 0.0006321 ***
+## age_c:trestbps_c -0.033428 0.010730 -3.1154 0.0018885 **
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1</code></pre>
+<p><em>Interpretting this model, for every 1 increase in average age, serum cholesterol increases by 1.04104. Further, for every 1 increase in average resting blood pressure, serum cholesterol increases by 0.29391. When looking at the interaction of age_c:trestbps_c (average age and resting blood pressure), we see a 0.03343 decrease in serum cholesterol. The regression before recomputing regression results with robust standard errors indicates that the following variables explain a sifficiant portion of the variance in serum cholestoral: age, resting blood pressure, and the interaction between age and resting blood pressure. After recomputing regression results with robust standard errors, all of the variables all of the variables were still significant and had p-values smaller than in the regression before robust standard error. Compared to the original model, the SE value for age increased with robust standard error while the SE values for resting blood pressure and the interaction decreased very slightly. The proportion of the variation in serum cholesterol that my model explains is 0.06085.</em></p>
+</div>
+<div id="bootstrapped-standard-errors-for-previous-regression-model-5-pts" class="section level2">
+<h2>4. Bootstrapped Standard Errors for Previous Regression Model (5 pts)</h2>
+<pre class="r"><code>samp_distn &lt;- replicate(5000, {
+    bootstrap_dat &lt;- sample_frac(Heart, replace = T)
+    fit1 &lt;- lm(chol ~ age_c * trestbps_c, data = bootstrap_dat)
+    coef(fit1)
+})
+#Calculuating Estimated SEs
+samp_distn %&gt;% t %&gt;% as.data.frame %&gt;% summarize_all(sd)</code></pre>
+<pre><code>##   (Intercept)     age_c trestbps_c age_c:trestbps_c
+## 1    1.739539 0.1875035 0.08599102       0.01062132</code></pre>
+<p><em>Compared to the original SEs, the bootstrapped standard errors are larger. Compared to the robust SEs, the bootstrapped standard errors are smaller, with the exception of the SE for trestbps_c. The bootstrapped standard error for trestbps_c is 0.08628512, while the robust SE for trestbps_c is 0.085734.</em></p>
+</div>
+<div id="logistic-regression-model-predicting-binary-variable-25-pts" class="section level2">
+<h2>5. Logistic Regression Model Predicting Binary Variable (25 pts)</h2>
+<pre class="r"><code>fit2 &lt;- glm(target ~ trestbps + chol, data = Heart, family = &quot;binomial&quot;)
+summary(fit2)</code></pre>
+<pre><code>##
+## Call:
+## glm(formula = target ~ trestbps + chol, family =
+&quot;binomial&quot;,
+## data = Heart)
+##
+## Deviance Residuals:
+## Min 1Q Median 3Q Max
+## -1.4639 -1.1986 0.9042 1.1260 1.5957
+##
+## Coefficients:
+## Estimate Std. Error z value Pr(&gt;|z|)
+## (Intercept) 2.883814 0.556005 5.187 2.14e-07 ***
+## trestbps -0.015106 0.003739 -4.040 5.34e-05 ***
+## chol -0.003413 0.001256 -2.717 0.00658 **
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1
+##
+## (Dispersion parameter for binomial family taken to be 1)
+##
+## Null deviance: 1410.5 on 1017 degrees of freedom
+## Residual deviance: 1382.9 on 1015 degrees of freedom
+## AIC: 1388.9
+##
+## Number of Fisher Scoring iterations: 4</code></pre>
+<pre class="r"><code>exp(coef(fit2))</code></pre>
+<pre><code>## (Intercept)    trestbps        chol 
+##  17.8823468   0.9850071   0.9965926</code></pre>
+<pre class="r"><code>probs &lt;- predict(fit2, type = &quot;response&quot;)
+table(predict = as.numeric(probs &gt; 0.5), truth = Heart$target) %&gt;% addmargins</code></pre>
+<pre><code>##        truth
+## predict    0    1  Sum
+##     0    214  170  384
+##     1    281  353  634
+##     Sum  495  523 1018</code></pre>
+<pre class="r"><code>(214+353)/1018 #Accuracy by hand</code></pre>
+<pre><code>## [1] 0.5569745</code></pre>
+<pre class="r"><code>353/523 #Sensitivity (TPR) by hand</code></pre>
+<pre><code>## [1] 0.6749522</code></pre>
+<pre class="r"><code>214/495 #Specificity (TNR) by hand</code></pre>
+<pre><code>## [1] 0.4323232</code></pre>
+<pre class="r"><code>353/634 #Precision (PPV) by hand</code></pre>
+<pre><code>## [1] 0.5567823</code></pre>
+<pre class="r"><code>class_diag &lt;- function(probs,truth) {
+
+  #Confusion: Calculate Accuracy, TPR, TNR, PPV
+  tab&lt;-table(factor(probs&gt;.5,levels=c(&quot;FALSE&quot;,&quot;TRUE&quot;)),truth)
+  acc=sum(diag(tab))/sum(tab)
+  sens=tab[2,2]/colSums(tab)[2]
+  spec=tab[1,1]/colSums(tab)[1]
+  ppv=tab[2,2]/rowSums(tab)[2]
+  f1=2*(sens*ppv)/(sens+ppv)
+  if(is.numeric(truth)==FALSE &amp; is.logical(truth)==FALSE) truth&lt;-as.numeric(truth)-1
+
+  #Calculate Exact AUC
+  ord&lt;-order(probs, decreasing=TRUE)
+  probs &lt;- probs[ord]; truth &lt;- truth[ord]
+  TPR=cumsum(truth)/max(1,sum(truth))
+  FPR=cumsum(!truth)/max(1,sum(!truth))
+  dup&lt;-c(probs[-1]&gt;=probs[-length(probs)], FALSE)
+  TPR&lt;-c(0,TPR[!dup],1); FPR&lt;-c(0,FPR[!dup],1)
+  n &lt;- length(TPR)
+  auc&lt;- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+  data.frame(acc,sens,spec,ppv,f1,auc) 
+}
+
+class_diag(probs, Heart$target)</code></pre>
+<pre><code>## acc sens spec ppv f1 auc
+## 1 0.5569745 0.6749522 0.4323232 0.5567823 0.6101988
+0.5867837</code></pre>
+<pre class="r"><code>#Making Density Plot
+Heart$logit&lt;-predict(fit2,type=&quot;link&quot;) 
+Heart &lt;- Heart %&gt;% mutate(targetchr = case_when(target==0 ~ &quot;no disease&quot;, target==1 ~ &quot;disease&quot;))
+Heart%&gt;%ggplot()+geom_density(aes(logit,color= targetchr,fill= targetchr), alpha=.4)+
+  theme(legend.position=c(.85,.85))+geom_vline(xintercept=0)+xlab(&quot;logit (log-odds)&quot;)+
+  geom_rug(aes(logit,color= targetchr))</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-6-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Making ROC Curve (Plot)
+library(plotROC)
+ROCplot &lt;- ggplot(Heart) + geom_roc(aes(d = target, m = probs), n.cuts = 0)
+ROCplot</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-6-2.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>calc_auc(ROCplot)</code></pre>
+<pre><code>##   PANEL group       AUC
+## 1     1    -1 0.5867837</code></pre>
+<p><em>In this model, controlling for serum cholesterol (chol), resting blood pressure (trestbps) decreases log-odds of presence of heart disease in the patient (makes it less likely). Further, every one-unit increase in resting blood pressure multiplies odds by 0.9850071. Further, controlling for resting blood pressure (trestbps), the serum cholesterol (chol) decreases log-odds of presence of heart disease in the patient (makes it less likely). Every one-unit increase in serum cholesterol multiples odds by 0.9965926. The accuracy of this model is 0.5569745. The sensitivity of this model is 0.6749522, the specificity of the model is 0.4323232, and the precision of the model is 0.5567823. The AUC of this model is 0.5867837, which based on our rule of thumb is considered bad.</em></p>
+</div>
+<div id="logistic-regression-model-predicting-binary-variable-from-all-variables-25-pts" class="section level2">
+<h2>6. Logistic Regression Model Predicting Binary Variable from All Variables (25 pts)</h2>
+<pre class="r"><code>fit3 &lt;- glm(target ~ age + trestbps + chol + thalach + oldpeak + thalrevised, data = Heart, family = &quot;binomial&quot;)
+summary(fit3)</code></pre>
+<pre><code>##
+## Call:
+## glm(formula = target ~ age + trestbps + chol + thalach +
+oldpeak +
+## thalrevised, family = &quot;binomial&quot;, data = Heart)
+##
+## Deviance Residuals:
+## Min 1Q Median 3Q Max
+## -2.4312 -0.6361 0.3093 0.6761 2.6911
+##
+## Coefficients:
+## Estimate Std. Error z value Pr(&gt;|z|)
+## (Intercept) -1.017688 1.068206 -0.953 0.34074
+## age -0.007689 0.010509 -0.732 0.46434
+## trestbps -0.005914 0.004900 -1.207 0.22746
+## chol -0.004276 0.001740 -2.457 0.01400 *
+## thalach 0.032491 0.004465 7.277 3.42e-13 ***
+## oldpeak -0.600848 0.085214 -7.051 1.78e-12 ***
+## thalrevisednormal -1.066078 0.330848 -3.222 0.00127 **
+## thalrevisedreversable defect -2.102843 0.175440 -11.986
+&lt; 2e-16 ***
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1
+##
+## (Dispersion parameter for binomial family taken to be 1)
+##
+## Null deviance: 1410.48 on 1017 degrees of freedom
+## Residual deviance: 913.84 on 1010 degrees of freedom
+## AIC: 929.84
+##
+## Number of Fisher Scoring iterations: 5</code></pre>
+<pre class="r"><code>probs2 &lt;- predict(fit3, type = &quot;response&quot;)
+table(predict = as.numeric(probs2 &gt; 0.5), truth = Heart$target) %&gt;% addmargins</code></pre>
+<pre><code>##        truth
+## predict    0    1  Sum
+##     0    388   90  478
+##     1    107  433  540
+##     Sum  495  523 1018</code></pre>
+<pre class="r"><code>class_diag &lt;- function(probs2,truth) {
+
+  #Confusion: Calculate Accuracy, TPR, TNR, PPV
+  tab&lt;-table(factor(probs2&gt;.5,levels=c(&quot;FALSE&quot;,&quot;TRUE&quot;)),truth)
+  acc=sum(diag(tab))/sum(tab)
+  sens=tab[2,2]/colSums(tab)[2]
+  spec=tab[1,1]/colSums(tab)[1]
+  ppv=tab[2,2]/rowSums(tab)[2]
+  f1=2*(sens*ppv)/(sens+ppv)
+  if(is.numeric(truth)==FALSE &amp; is.logical(truth)==FALSE) truth&lt;-as.numeric(truth)-1
+
+  #Calculate Exact AUC
+  ord&lt;-order(probs2, decreasing=TRUE)
+  probs2 &lt;- probs2[ord]; truth &lt;- truth[ord]
+  TPR=cumsum(truth)/max(1,sum(truth))
+  FPR=cumsum(!truth)/max(1,sum(!truth))
+  dup&lt;-c(probs2[-1]&gt;=probs2[-length(probs2)], FALSE)
+  TPR&lt;-c(0,TPR[!dup],1); FPR&lt;-c(0,FPR[!dup],1)
+  n &lt;- length(TPR)
+  auc&lt;- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+  data.frame(acc,sens,spec,ppv,f1,auc)
+}
+
+class_diag(probs2, Heart$target)</code></pre>
+<pre><code>## acc sens spec ppv f1 auc
+## 1 0.8064833 0.8279159 0.7838384 0.8018519 0.8146754
+0.8716805</code></pre>
+<pre class="r"><code>#Cross Validation
+set.seed(1234)
+k=10 
+data&lt;-Heart[sample(nrow(Heart)),]
+folds&lt;-cut(seq(1:nrow(Heart)),breaks=k,labels=F) 
+diags&lt;-NULL
+for(i in 1:k){
+train&lt;-data[folds!=i,]
+test&lt;-data[folds==i,]
+truth&lt;-test$target
+fit4&lt;-glm(target ~ age + trestbps + chol + thalach + oldpeak + thalrevised, data=train,family=&quot;binomial&quot;)
+probs3&lt;-predict(fit4,newdata = test,type=&quot;response&quot;)
+diags&lt;-rbind(diags,class_diag(probs3,truth))
+}
+summarize_all(diags,mean,na.rm=T)</code></pre>
+<pre><code>## acc sens spec ppv f1 auc
+## 1 0.8034848 0.8202275 0.7834598 0.8019367 0.8099046
+0.8664449</code></pre>
+<pre class="r"><code>#LASSO
+x &lt;- -model.matrix(fit3)
+y &lt;- as.matrix(Heart$target)
+cv &lt;- cv.glmnet(x, y, family = &quot;binomial&quot;)
+lasso1 &lt;- glmnet(x, y, , family = &quot;binomial&quot;, lambda = cv$lambda.1se)
+coef(lasso1)</code></pre>
+<pre><code>## 9 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
+##                                       s0
+## (Intercept)                  -2.51589277
+## (Intercept)                   .         
+## age                           .         
+## trestbps                      .         
+## chol                          .         
+## thalach                      -0.02467606
+## oldpeak                       0.45484297
+## thalrevisednormal             0.28180297
+## thalrevisedreversable defect  1.55589110</code></pre>
+<pre class="r"><code>#Cross Validation for LASSO
+set.seed(1234)
+k = 10
+data1 &lt;- Heart[sample(nrow(Heart)), ]
+folds &lt;- cut(seq(1:nrow(Heart)), breaks = k, labels = F)
+diags &lt;- NULL 
+for (i in 1:k) {
+    train &lt;- data1[folds != i, ]
+    test &lt;- data1[folds == i, ]
+    truth &lt;- test$target
+    fit5 &lt;- glm(target ~ thalach + oldpeak + thalrevised, data = train, family = &quot;binomial&quot;)
+    probs4 &lt;- predict(fit5, newdata = test, type = &quot;response&quot;)
+    diags &lt;- rbind(diags, class_diag(probs4, truth))
+}
+summarize_all(diags, mean, na.rm=T)</code></pre>
+<pre><code>## acc sens spec ppv f1 auc
+## 1 0.7897204 0.778998 0.7995195 0.8061198 0.7913135
+0.8639625</code></pre>
+<p><em>After fitting the model, I computed the diagnostics of accuracy, sensitivity, specificity, precision, and AUC. The accuracy was 0.7337917. The sensitivity was 0.7877629. The specificity was 0.6767677. The precision was 0.7202797, and the AUC was 0.8080692. Based on our rules of thumb, this AUC is considered good! When I performed a 10-fold CV with the same model the classification diagnostics of accuracy, sensitivity, specificity, precision, and the AUC were 0.8034848, 0.8202275, 0.7834598, 0.8019367 and 0.8664449 respectively. Based on our rules of thumb, this AUC is considered good as well! Compared to the in-sample metrics, the metrics yielded after running the 10-fold CV are higher for accuracy, sensitivity, specifity, precision, and AUC. After running LASSO on the same model/variable, the variables that were retained include thalac, oldpeak, and thalrevised. I then performed a 10-fold CV using only the variables lasso selected. I also ran the classification diagnostics of accuracy, sensitivity, specificity, precision, and the AUC, which here were 0.7897204 for accuracy, 0.778998 for sensitivity, 0.7995195 for specificity, 0.8061198 for precision, and 0.8639625 for AUC. Based on our rules of thumb, this AUC is considered good as well! When I ran the in-sample classification diagnostics for the first model in this section, I got an AUC value of 0.8080692, which is the smallest of the three I calculated in this section. The highest AUC value I calculated in this section (AUC = 0.8664449.) was from the out-of-sample classification diagnostics on the 10-fold CV with the same model as the first model ran in this section (predicting binary variable &quot;target&quot; from all variables). Lastly, the third AUC value I calculated in this section (AUC = 0.8639625) was found after performing the 10-fold CV using only the variables lasso selected. This AUC is greater than the AUC found from the in-sample classification diagnostics for the first model in this section, but is less than the AUC found after running the out-of-sample classification diagnostics on the 10-fold CV with the same model as the first model ran in this section.</em></p>
+</div>
+</div>
+
+            
+        <hr>         <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div> 
+            </div>
+          </div>
+
+   <hr>  <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div> 
+        </div>
+      </div>
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../../js/docs.min.js"></script>
+<script src="../../js/main.js"></script>
+
+<script src="../../js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

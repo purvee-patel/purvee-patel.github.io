@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Purvee Patel" />
+    
+    <link rel="shortcut icon" type="image/x-icon" href="../../img/favicon.ico">
+    <title>Project 1: Exploratory Data Analysis on World Happiness Report Data</title>
+    <meta name="generator" content="Hugo 0.79.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../../css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="../../"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="../../post/">BLOG</a></li>
+        
+        <li><a href="../../projects/">PROJECTS</a></li>
+        
+        <li><a href="../../resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="../../project/project1/">Project 1: Exploratory Data Analysis on World Happiness Report Data</a></strong>
+          </h3>
+        </div>
+ 
+<div class="blog-title">
+          <h4>
+         October 28, 2020 
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<div id="introduction-4-pts" class="section level4">
+<h4>0. Introduction (4 pts)</h4>
+<p>My chosen dataset yields from the World Happiness Report of 2015 as found on Kaggle. The World Happiness Report is used by experts in a variety of fields to look at how well being can be evaluated as a measure to analyze the progress of countries. The original variables included in this specific dataset are: Country, Region, Happiness Rank, Happiness Score, Standard Error, Economy (GDP per Capita), Family, Health (Life Expectancy), Trust (Government Corruption), Generosity, and Dystopia Residual. I removed the last variable, Dystopia Residal, as residuals were described to have &quot;no impact on the total score reported for each country.&quot; Further, the residual is an unexplained component that varies for each respective country and mirrors the &quot;extent to which the [other seven] variables either over- or under-explain average&quot; life contentment evaluations. I did not see a way in which the Dystopia Residual data could be well compared to the other variables in this study and hence removed it from and overwrote the original dataset to have 11 variables left to analyze. The variables of Happiness Rank and Happiness Score were created using data from the Gallup World Poll. The Happiness Scores were calculated based on responses to main life evaluation questions asked in the Gallup World Poll using the Cantril ladder, which asks those taking the poll to conceptualize a ladder and score their current value of living with the worst possible life considered a 0 and the best possible life considered a 10. The variables that follow the Happiness Score in the dataset &quot;estimate the extent to which each of [these six] factors ...contribute to making life evaluations higher in each country.&quot; The six factors include: Economy (GDP per Capita), Family, Health (Life Expectancy), Freedom, Trust (Government Corruption), and Generosity.</p>
+<p>I was drawn to this dataset as I have become increasingly interested in learning about the contentment of other world citizens in regard to their respective resident countries as many of the classes I am in this semester discuss topics such as trust in the government, GDP, and health. I wanted to see how and if variables like these translated to resident contentment and to see if there were any regions that were prevalent on different ends of the spectrum. I opine that regions higher in Economy (GDP Per Capita) and will have higher/better Happiness Scores.</p>
+<pre class="r"><code>library(tidyverse)
+library(dplyr)
+library(ggplot2)
+Happiness &lt;- read_csv(&quot;HappinessData.csv&quot;)
+glimpse(Happiness)</code></pre>
+<pre><code>## Rows: 158
+## Columns: 12
+## $ Country                         &lt;chr&gt; &quot;Switzerland&quot;, &quot;Iceland&quot;, &quot;Denmark&quot;, …
+## $ Region                          &lt;chr&gt; &quot;Western Europe&quot;, &quot;Western Europe&quot;, &quot;…
+## $ `Happiness Rank`                &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12…
+## $ `Happiness Score`               &lt;dbl&gt; 7.587, 7.561, 7.527, 7.522, 7.427, 7.…
+## $ `Standard Error`                &lt;dbl&gt; 0.03411, 0.04884, 0.03328, 0.03880, 0…
+## $ `Economy (GDP per Capita)`      &lt;dbl&gt; 1.39651, 1.30232, 1.32548, 1.45900, 1…
+## $ Family                          &lt;dbl&gt; 1.34951, 1.40223, 1.36058, 1.33095, 1…
+## $ `Health (Life Expectancy)`      &lt;dbl&gt; 0.94143, 0.94784, 0.87464, 0.88521, 0…
+## $ Freedom                         &lt;dbl&gt; 0.66557, 0.62877, 0.64938, 0.66973, 0…
+## $ `Trust (Government Corruption)` &lt;dbl&gt; 0.41978, 0.14145, 0.48357, 0.36503, 0…
+## $ Generosity                      &lt;dbl&gt; 0.29678, 0.43630, 0.34139, 0.34699, 0…
+## $ `Dystopia Residual`             &lt;dbl&gt; 2.51738, 2.70201, 2.49204, 2.46531, 2…</code></pre>
+<pre class="r"><code>Happiness &lt;- Happiness[-12]</code></pre>
+</div>
+<div id="tidying-rearranging-widelong-8-pts" class="section level4">
+<h4>1. Tidying: Rearranging Wide/Long (8 pts)</h4>
+<pre class="r"><code>Happiness_Untidy &lt;- Happiness %&gt;% pivot_longer(c(&quot;Family&quot;, &quot;Freedom&quot;, 
+    &quot;Generosity&quot;), names_to = &quot;Social Based Measures&quot;, values_to = &quot;Value&quot;)
+glimpse(Happiness_Untidy)</code></pre>
+<pre><code>## Rows: 474
+## Columns: 10
+## $ Country                         &lt;chr&gt; &quot;Switzerland&quot;, &quot;Switzerland&quot;, &quot;Switze…
+## $ Region                          &lt;chr&gt; &quot;Western Europe&quot;, &quot;Western Europe&quot;, &quot;…
+## $ `Happiness Rank`                &lt;dbl&gt; 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5…
+## $ `Happiness Score`               &lt;dbl&gt; 7.587, 7.587, 7.587, 7.561, 7.561, 7.…
+## $ `Standard Error`                &lt;dbl&gt; 0.03411, 0.03411, 0.03411, 0.04884, 0…
+## $ `Economy (GDP per Capita)`      &lt;dbl&gt; 1.39651, 1.39651, 1.39651, 1.30232, 1…
+## $ `Health (Life Expectancy)`      &lt;dbl&gt; 0.94143, 0.94143, 0.94143, 0.94784, 0…
+## $ `Trust (Government Corruption)` &lt;dbl&gt; 0.41978, 0.41978, 0.41978, 0.14145, 0…
+## $ `Social Based Measures`         &lt;chr&gt; &quot;Family&quot;, &quot;Freedom&quot;, &quot;Generosity&quot;, &quot;F…
+## $ Value                           &lt;dbl&gt; 1.34951, 0.66557, 0.29678, 1.40223, 0…</code></pre>
+<pre class="r"><code>Happiness_Tidy &lt;- Happiness_Untidy %&gt;% pivot_wider(names_from = &quot;Social Based Measures&quot;, 
+    values_from = &quot;Value&quot;)
+glimpse(Happiness_Tidy)</code></pre>
+<pre><code>## Rows: 158
+## Columns: 11
+## $ Country                         &lt;chr&gt; &quot;Switzerland&quot;, &quot;Iceland&quot;, &quot;Denmark&quot;, …
+## $ Region                          &lt;chr&gt; &quot;Western Europe&quot;, &quot;Western Europe&quot;, &quot;…
+## $ `Happiness Rank`                &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12…
+## $ `Happiness Score`               &lt;dbl&gt; 7.587, 7.561, 7.527, 7.522, 7.427, 7.…
+## $ `Standard Error`                &lt;dbl&gt; 0.03411, 0.04884, 0.03328, 0.03880, 0…
+## $ `Economy (GDP per Capita)`      &lt;dbl&gt; 1.39651, 1.30232, 1.32548, 1.45900, 1…
+## $ `Health (Life Expectancy)`      &lt;dbl&gt; 0.94143, 0.94784, 0.87464, 0.88521, 0…
+## $ `Trust (Government Corruption)` &lt;dbl&gt; 0.41978, 0.14145, 0.48357, 0.36503, 0…
+## $ Family                          &lt;dbl&gt; 1.34951, 1.40223, 1.36058, 1.33095, 1…
+## $ Freedom                         &lt;dbl&gt; 0.66557, 0.62877, 0.64938, 0.66973, 0…
+## $ Generosity                      &lt;dbl&gt; 0.29678, 0.43630, 0.34139, 0.34699, 0…</code></pre>
+<p>Here, I used the function <code>pivot_longer</code> to create a column named &quot;Social Based Measures&quot; using the variables Family, Freedom, and Generosity, creating a chr (character) variable. I took the values of these three variables and created an additional column that assigned their respecitve values to each variable in the &quot;Social Based Measure&quot; column. In doing so, I made the original Happiness dataset, which was tidy, untidy. To retidy the data, I used <code>pivot_wider</code> to return the untidy dataset to a format in which the three variables of Family, Freedom, and Generosity were returned to their original column form with their respective values for each of the 158 countries included in this dataset. In tidying the data, I used the function <code>pivot_wider</code> to reshape the dataset so that every observation has its own row and every variable its own column.</p>
+</div>
+<div id="joiningmerging-8-pts" class="section level4">
+<h4>2. Joining/Merging (8 pts)</h4>
+<pre class="r"><code>Happiness %&gt;% summarize_all(function(x) sum(is.na(x)))</code></pre>
+<pre><code>## # A tibble: 1 x 11
+##   Country Region `Happiness Rank` `Happiness Scor… `Standard Error`
+##     &lt;int&gt;  &lt;int&gt;            &lt;int&gt;            &lt;int&gt;            &lt;int&gt;
+## 1       0      0                0                0                0
+## # … with 6 more variables: `Economy (GDP per Capita)` &lt;int&gt;, Family &lt;int&gt;,
+## #   `Health (Life Expectancy)` &lt;int&gt;, Freedom &lt;int&gt;, `Trust (Government
+## #   Corruption)` &lt;int&gt;, Generosity &lt;int&gt;</code></pre>
+<pre class="r"><code>datasetpart1 &lt;- Happiness %&gt;% select(&quot;Country&quot;, 2:6)
+datasetpart2 &lt;- Happiness %&gt;% select(&quot;Country&quot;, 7:11)
+glimpse(datasetpart1)</code></pre>
+<pre><code>## Rows: 158
+## Columns: 6
+## $ Country                    &lt;chr&gt; &quot;Switzerland&quot;, &quot;Iceland&quot;, &quot;Denmark&quot;, &quot;Norw…
+## $ Region                     &lt;chr&gt; &quot;Western Europe&quot;, &quot;Western Europe&quot;, &quot;Weste…
+## $ `Happiness Rank`           &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,…
+## $ `Happiness Score`          &lt;dbl&gt; 7.587, 7.561, 7.527, 7.522, 7.427, 7.406, …
+## $ `Standard Error`           &lt;dbl&gt; 0.03411, 0.04884, 0.03328, 0.03880, 0.0355…
+## $ `Economy (GDP per Capita)` &lt;dbl&gt; 1.39651, 1.30232, 1.32548, 1.45900, 1.3262…</code></pre>
+<pre class="r"><code>glimpse(datasetpart2)</code></pre>
+<pre><code>## Rows: 158
+## Columns: 6
+## $ Country                         &lt;chr&gt; &quot;Switzerland&quot;, &quot;Iceland&quot;, &quot;Denmark&quot;, …
+## $ Family                          &lt;dbl&gt; 1.34951, 1.40223, 1.36058, 1.33095, 1…
+## $ `Health (Life Expectancy)`      &lt;dbl&gt; 0.94143, 0.94784, 0.87464, 0.88521, 0…
+## $ Freedom                         &lt;dbl&gt; 0.66557, 0.62877, 0.64938, 0.66973, 0…
+## $ `Trust (Government Corruption)` &lt;dbl&gt; 0.41978, 0.14145, 0.48357, 0.36503, 0…
+## $ Generosity                      &lt;dbl&gt; 0.29678, 0.43630, 0.34139, 0.34699, 0…</code></pre>
+<pre class="r"><code>fulldataset &lt;- full_join(datasetpart1, datasetpart2, by = &quot;Country&quot;)
+glimpse(fulldataset)</code></pre>
+<pre><code>## Rows: 158
+## Columns: 11
+## $ Country                         &lt;chr&gt; &quot;Switzerland&quot;, &quot;Iceland&quot;, &quot;Denmark&quot;, …
+## $ Region                          &lt;chr&gt; &quot;Western Europe&quot;, &quot;Western Europe&quot;, &quot;…
+## $ `Happiness Rank`                &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12…
+## $ `Happiness Score`               &lt;dbl&gt; 7.587, 7.561, 7.527, 7.522, 7.427, 7.…
+## $ `Standard Error`                &lt;dbl&gt; 0.03411, 0.04884, 0.03328, 0.03880, 0…
+## $ `Economy (GDP per Capita)`      &lt;dbl&gt; 1.39651, 1.30232, 1.32548, 1.45900, 1…
+## $ Family                          &lt;dbl&gt; 1.34951, 1.40223, 1.36058, 1.33095, 1…
+## $ `Health (Life Expectancy)`      &lt;dbl&gt; 0.94143, 0.94784, 0.87464, 0.88521, 0…
+## $ Freedom                         &lt;dbl&gt; 0.66557, 0.62877, 0.64938, 0.66973, 0…
+## $ `Trust (Government Corruption)` &lt;dbl&gt; 0.41978, 0.14145, 0.48357, 0.36503, 0…
+## $ Generosity                      &lt;dbl&gt; 0.29678, 0.43630, 0.34139, 0.34699, 0…</code></pre>
+<p>In this section I divided my complete dataset (Happiness) into two smaller datasets named datasetpart1 and datasetpart2 respectively with the common ID variable of Country. I used a full_join() here to combine/join the smaller datasets back together by the common ID variable of Country. I knew that there were no observations missing as I checked for missing/NA values in the full Happiness dataset prior to splitting it in two. From this we know that each Country was assigned a region and had a value recorded for the variables Happiness Rank, Happiness Score, Standard Error, Economy (GDP per Capita), Family, Health (Life Expectancy), Freedom, Trust (Government Corruption), and Generosity. I used a full_join because it keeps all of the rows from both of the datasets that I created and inserts an NA where there is missing information. I knew, however, as mentioned before that there would be no concern with NAs in joining these datasets as there was no missing information present in either. Further, we can conclude from this that there were no cases dropped when using the full_join to join datasetpart1 and datasetpart2. Using a full join yielded a full dataset (labeled &quot;fulldataset&quot;) that contained as much information as possible from each Country. Lastly, there were 158 observations in each column in datasetpart1, datasetpart2, and fulldataset. Datasetpart1 had 6 columns, datasetpart2 had 6 columns, and the joined dataset (fulldataset) had 11 columns.</p>
+</div>
+<div id="wrangling-40-pts" class="section level4">
+<h4>3. Wrangling (40 pts)</h4>
+<pre class="r"><code>Happiness %&gt;% summarize_if(is.numeric, c(mean = mean, min = min, 
+    max = max, n_distinct = n_distinct)) %&gt;% pivot_longer(contains(&quot;_&quot;))</code></pre>
+<pre><code>## # A tibble: 36 x 2
+##    name                                 value
+##    &lt;chr&gt;                                &lt;dbl&gt;
+##  1 Happiness Rank_mean                79.5   
+##  2 Happiness Score_mean                5.38  
+##  3 Standard Error_mean                 0.0479
+##  4 Economy (GDP per Capita)_mean       0.846 
+##  5 Family_mean                         0.991 
+##  6 Health (Life Expectancy)_mean       0.630 
+##  7 Freedom_mean                        0.429 
+##  8 Trust (Government Corruption)_mean  0.143 
+##  9 Generosity_mean                     0.237 
+## 10 Happiness Rank_min                  1     
+## # … with 26 more rows</code></pre>
+<pre class="r"><code>Happiness %&gt;% group_by(Region) %&gt;% summarize_if(is.numeric, c(mean = mean, 
+    sd = sd, min = min, max = max, n_distinct = n_distinct)) %&gt;% 
+    pivot_longer(contains(&quot;_&quot;))</code></pre>
+<pre><code>## # A tibble: 450 x 3
+##    Region                    name                                value
+##    &lt;chr&gt;                     &lt;chr&gt;                               &lt;dbl&gt;
+##  1 Australia and New Zealand Happiness Rank_mean                9.5   
+##  2 Australia and New Zealand Happiness Score_mean               7.28  
+##  3 Australia and New Zealand Standard Error_mean                0.0373
+##  4 Australia and New Zealand Economy (GDP per Capita)_mean      1.29  
+##  5 Australia and New Zealand Family_mean                        1.31  
+##  6 Australia and New Zealand Health (Life Expectancy)_mean      0.920 
+##  7 Australia and New Zealand Freedom_mean                       0.645 
+##  8 Australia and New Zealand Trust (Government Corruption)_mean 0.393 
+##  9 Australia and New Zealand Generosity_mean                    0.455 
+## 10 Australia and New Zealand Happiness Rank_sd                  0.707 
+## # … with 440 more rows</code></pre>
+<pre class="r"><code>median(Happiness$`Happiness Score`)</code></pre>
+<pre><code>## [1] 5.2325</code></pre>
+<pre class="r"><code>Happiness %&gt;% mutate(Grouping.Var = ifelse(`Happiness Score` &gt; 
+    5.2325, &quot;High&quot;, &quot;Low&quot;)) %&gt;% group_by(Grouping.Var) %&gt;% summarize_if(is.numeric, 
+    c(mean = mean, sd = sd, min = min, max = max, n_distinct = n_distinct))</code></pre>
+<pre><code>## # A tibble: 2 x 46
+##   Grouping.Var `Happiness Rank… `Happiness Scor… `Standard Error…
+##   &lt;chr&gt;                   &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+## 1 High                      40              6.33           0.0454
+## 2 Low                      119.             4.42           0.0504
+## # … with 42 more variables: `Economy (GDP per Capita)_mean` &lt;dbl&gt;,
+## #   Family_mean &lt;dbl&gt;, `Health (Life Expectancy)_mean` &lt;dbl&gt;,
+## #   Freedom_mean &lt;dbl&gt;, `Trust (Government Corruption)_mean` &lt;dbl&gt;,
+## #   Generosity_mean &lt;dbl&gt;, `Happiness Rank_sd` &lt;dbl&gt;, `Happiness
+## #   Score_sd` &lt;dbl&gt;, `Standard Error_sd` &lt;dbl&gt;, `Economy (GDP per
+## #   Capita)_sd` &lt;dbl&gt;, Family_sd &lt;dbl&gt;, `Health (Life Expectancy)_sd` &lt;dbl&gt;,
+## #   Freedom_sd &lt;dbl&gt;, `Trust (Government Corruption)_sd` &lt;dbl&gt;,
+## #   Generosity_sd &lt;dbl&gt;, `Happiness Rank_min` &lt;dbl&gt;, `Happiness
+## #   Score_min` &lt;dbl&gt;, `Standard Error_min` &lt;dbl&gt;, `Economy (GDP per
+## #   Capita)_min` &lt;dbl&gt;, Family_min &lt;dbl&gt;, `Health (Life Expectancy)_min` &lt;dbl&gt;,
+## #   Freedom_min &lt;dbl&gt;, `Trust (Government Corruption)_min` &lt;dbl&gt;,
+## #   Generosity_min &lt;dbl&gt;, `Happiness Rank_max` &lt;dbl&gt;, `Happiness
+## #   Score_max` &lt;dbl&gt;, `Standard Error_max` &lt;dbl&gt;, `Economy (GDP per
+## #   Capita)_max` &lt;dbl&gt;, Family_max &lt;dbl&gt;, `Health (Life Expectancy)_max` &lt;dbl&gt;,
+## #   Freedom_max &lt;dbl&gt;, `Trust (Government Corruption)_max` &lt;dbl&gt;,
+## #   Generosity_max &lt;dbl&gt;, `Happiness Rank_n_distinct` &lt;int&gt;, `Happiness
+## #   Score_n_distinct` &lt;int&gt;, `Standard Error_n_distinct` &lt;int&gt;, `Economy (GDP
+## #   per Capita)_n_distinct` &lt;int&gt;, Family_n_distinct &lt;int&gt;, `Health (Life
+## #   Expectancy)_n_distinct` &lt;int&gt;, Freedom_n_distinct &lt;int&gt;, `Trust (Government
+## #   Corruption)_n_distinct` &lt;int&gt;, Generosity_n_distinct &lt;int&gt;</code></pre>
+<pre class="r"><code>Happiness %&gt;% filter(Region == &quot;Sub-Saharan Africa&quot;) %&gt;% arrange(&quot;Happiness.Rank)&quot;, 
+    desc())</code></pre>
+<pre><code>## # A tibble: 40 x 11
+##    Country Region `Happiness Rank` `Happiness Scor… `Standard Error`
+##    &lt;chr&gt;   &lt;chr&gt;             &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+##  1 Maurit… Sub-S…               71             5.48           0.0720
+##  2 Nigeria Sub-S…               78             5.27           0.0419
+##  3 Zambia  Sub-S…               85             5.13           0.0699
+##  4 Somali… Sub-S…               91             5.06           0.0616
+##  5 Mozamb… Sub-S…               94             4.97           0.0790
+##  6 Lesotho Sub-S…               97             4.90           0.0944
+##  7 Swazil… Sub-S…              101             4.87           0.0874
+##  8 South … Sub-S…              113             4.64           0.0458
+##  9 Ghana   Sub-S…              114             4.63           0.0474
+## 10 Zimbab… Sub-S…              115             4.61           0.0429
+## # … with 30 more rows, and 6 more variables: `Economy (GDP per Capita)` &lt;dbl&gt;,
+## #   Family &lt;dbl&gt;, `Health (Life Expectancy)` &lt;dbl&gt;, Freedom &lt;dbl&gt;, `Trust
+## #   (Government Corruption)` &lt;dbl&gt;, Generosity &lt;dbl&gt;</code></pre>
+<pre class="r"><code>Happiness %&gt;% filter(Region == &quot;Australia and New Zealand&quot;) %&gt;% 
+    arrange(&quot;Happiness.Rank&quot;, desc())</code></pre>
+<pre><code>## # A tibble: 2 x 11
+##   Country Region `Happiness Rank` `Happiness Scor… `Standard Error`
+##   &lt;chr&gt;   &lt;chr&gt;             &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+## 1 New Ze… Austr…                9             7.29           0.0337
+## 2 Austra… Austr…               10             7.28           0.0408
+## # … with 6 more variables: `Economy (GDP per Capita)` &lt;dbl&gt;, Family &lt;dbl&gt;,
+## #   `Health (Life Expectancy)` &lt;dbl&gt;, Freedom &lt;dbl&gt;, `Trust (Government
+## #   Corruption)` &lt;dbl&gt;, Generosity &lt;dbl&gt;</code></pre>
+<p>In this section I began wrangling by using the summarize_if function to create summary statistics for my numeric variables before grouping. In doing so I used the summary statistics of mean, minimum, maximum, and n_distinct. I followed this by using <code>pivot_longer</code> to organize the table. I then grouped the data by the variable of Region and used the same summary statistics of mean, minimum, maximum, and n_distinct on each of the numeric variables. I again used <code>pivot_longer</code> to organize this table of data. I was intrigued by the variable of Happiness Score and wanted to further explore this variable. I found the median Happiness Score of the variable's observations and used the mutate function along with ifelse to dichotomize a numeric variable to create a categorical variable of high and low Happiness Scores in a new variable named Grouping.Var. The “high” group contained values above the median Happiness Score while the “low” group contained values below the median Happiness Score. After this, I ran summary statistics of mean, minimum, maximum, and n_distinctonce again. In doing so I noted that the variables that showed the greatest differences in scores between the high and low groups were average Economy (GDP per capita), Family, Health, and Freedom.</p>
+<p>When looking at the results of the above analyses I noticed that the region of Australia and New Zealand had the highest mean happiness scores, while countries from the region of Sub-Saharan Africa had the lowest mean happiness scores. To look further into this I filtered the dataset at large by each of these regions respectively and arranged them based on happiness rank in descending order. Another interesting observation was that there were 40 countries in the Sub-Saharan Africa region, and 34 of those 40 countries fell in the lowest third of countries based on happiness rank. In other words out of the 40 countries in this dataset from Sub-Saharan Africa, there were 36 countries that fell between the 100-158 ranks in the Happiness Rank variable.</p>
+</div>
+<div id="visualizing-30-pts" class="section level4">
+<h4>4. Visualizing (30 pts)</h4>
+<pre class="r"><code>ggplot(Happiness, aes(x = `Economy (GDP per Capita)`, y = `Happiness Score`, 
+    color = Region)) + geom_point() + scale_x_continuous(lim = c(0, 
+    2), breaks = seq(0, 2, 0.5)) + scale_y_continuous(lim = c(4, 
+    8), breaks = seq(4, 8, 0.5)) + labs(x = &quot;Economy (GDP per capita)&quot;, 
+    y = &quot;Happiness Score&quot;) + ggtitle(&quot;Happiness Scores Based on Economy&quot;) + 
+    theme_gray()</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /> I created this plot -- &quot;Happiness Scores Based on Economy&quot; to see if there was a relationship between the Economy (GDP per capita) of a country and its Happiness Score. I further colored the points by their respective regions to see if there were any groups or patterns observed in this graph. There appears to be a fairly positive correlation because Economy (GDP per capita) scores and Happiness Score as seen through this graph. As the Economy (GDP per capita) increases the Happiness Score increases. Further, we see that the countries in the region of Australia and New Zealand have some of the highest Economy (GDP per capita) scores and Happiness Scores. The countries of the region of Sub-Saharan Africa, on the other hand, generally present the lowest Economy (GDP per capita) scores and Happiness Score. An interesting observation is that while a number of Western European countries fall on the high end of the Economy (GDP per capita) variable range and Happiness Score variable range, there are a few outliers in this region that have similar Economy (GDP per capita) scores to the Western European countries with high Happiness Scores but in turn have mid range to lower Happiness Scores. The same trend follows for Middle Eastern countries that vary largely across the Economy (GDP per capita) range as well as the Happiness Score range.</p>
+<pre class="r"><code>ggplot(Happiness, aes(Region, `Trust (Government Corruption)`, 
+    fill = Region)) + geom_bar(stat = &quot;summary&quot;, fun = mean) + 
+    geom_errorbar(stat = &quot;summary&quot;, aes(width = 0.1)) + labs(y = &quot;Trust (Government Corruption)&quot;) + 
+    ggtitle(&quot;Trust (Government Corruption) by Region&quot;) + scale_fill_brewer(palette = &quot;Spectral&quot;) + 
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>For this plot, I looked at the average Trust (Government Corruption) scores of the countries in the Happiness dataset by region. Based on the addition of error bars, observations about the significance of differences between the Trust (Government Corruption) scores can be made. The following observations are made based on the following logic: when the error bars of the two regions in comparison do not overlap, there is a signficiant difference between the Trust (Government Corruption) scores of these two regions. The region with the highest average Trust (Government Corruption) score is Australia and New Zealand which has an average Trust (Government Corruption) score that is significantly different from the average scores of all other regions in this dataset. The two regions with the second and third highest average Trust (Government Corruption) scores are North America and Western Europe respectively. The average Trust (Government Corruption) scores of these two regions do not significantly differ from one another. Lastly looking at the regions with the lowest average Trust (Government Corruption) scores (Central and Eastern Europe and Southern Asia), the average Trust (Government Corruption) scores of these two regions do not significantly differ from one another either. From this analysis it was interesting to see that the two regions that had the highest Economy (GDP per capita) scores (Western Europe and Australia and New Zealand) had some of the highest average Trust (Government Corruption) scores as well. This observation, however, does not hold well for the regions with the lowest Economy (GDP per capita) scores. I am interested and excited to look at the correlation values of these two variables in the following heatmap to determine if there is a strong correlation between the two.</p>
+<pre class="r"><code>Happiness %&gt;% select_if(is.numeric) %&gt;% select(`Happiness Score`, 
+    `Economy (GDP per Capita)`, Family, `Health (Life Expectancy)`, 
+    Freedom, `Trust (Government Corruption)`, Generosity) %&gt;% 
+    cor %&gt;% as.data.frame %&gt;% rownames_to_column(&quot;Variable1&quot;) %&gt;% 
+    pivot_longer(-1, names_to = &quot;Variable2&quot;, values_to = &quot;Correlation&quot;) %&gt;% 
+    ggplot(aes(Variable1, Variable2, fill = Correlation)) + geom_tile() + 
+    scale_fill_gradient2(low = &quot;white&quot;, mid = &quot;yellow&quot;, high = &quot;red&quot;) + 
+    geom_text(aes(label = round(Correlation, 2)), color = &quot;black&quot;, 
+        size = 4) + theme(axis.text.x = element_text(angle = 45, 
+    hjust = 1)) + ggtitle(&quot;Correlation Heatmap for World Happiness Report Data&quot;)</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>As per my previous interest in the relationship between the variables Economy (GDP per capita) and Trust (Government Corruption), there infact is a low strength of correlation between these two variables with a correlation value of 0.31. On the other hand, the relationship between the variables of Economy (GDP per capita) and Health (Life Expectancy) have a strong correlation value of 0.82, as does the Economy (GDP per capita) variable with Happiness Scores with a correlation value of 0.78. Another notably strong correlation is seen between the variables of Happiness Score and Family with a correlation value of 0.74. Contrastly, the variables of Generosity and Economy (GDP per capita) have the weakest correlation of any combination of variables in the heatmap at a value of -0.01. Additionally, the variable of Generosity has a weak correlation with the variable of Family resulting in a correlation value of 0.09. Further, it can be seen in the heatmap above that the variable of Generosity at large has very weak correlations with all other numeric variables in the Happiness dataset. The variable of Trust (Government Corruption) also has fairly weak correlations with the other numeric variables, but not to the extent that the variable of Generosity does.</p>
+</div>
+<div id="dimensionality-reduction-20-pts" class="section level4">
+<h4>5. Dimensionality Reduction (20 pts)</h4>
+<pre class="r"><code>library(cluster)
+pam_data &lt;- Happiness %&gt;% select(Family, `Health (Life Expectancy)`, 
+    `Economy (GDP per Capita)`)
+sil_width &lt;- vector()
+for (i in 2:10) {
+    pam_fits &lt;- pam(pam_data, k = i)
+    sil_width[i] &lt;- pam_fits$silinfo$avg.width
+}
+ggplot() + geom_line(aes(x = 1:10, y = sil_width)) + scale_x_continuous(name = &quot;k&quot;, 
+    breaks = 1:10)</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>pam1 &lt;- Happiness %&gt;% select(Family, `Health (Life Expectancy)`, 
+    `Economy (GDP per Capita)`) %&gt;% pam(k = 2)
+pam1</code></pre>
+<pre><code>## Medoids:
+##       ID  Family Health (Life Expectancy) Economy (GDP per Capita)
+## [1,] 104 1.20215                  0.75905                  1.12094
+## [2,] 124 0.86908                  0.35874                  0.45407
+## Clustering vector:
+##   [1] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+##  [38] 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 1 1 1 1 2 1 1 1 1 1 1 1 1 1 1 1 2 1 1 1 1 1
+##  [75] 2 1 2 2 1 1 2 1 1 1 2 1 1 1 1 2 2 2 1 2 1 1 2 1 2 1
+##  [ reached getOption(&quot;max.print&quot;) -- omitted 58 entries ]
+## Objective function:
+##     build      swap 
+## 0.3450613 0.3168064 
+## 
+## Available components:
+##  [1] &quot;medoids&quot;    &quot;id.med&quot;     &quot;clustering&quot; &quot;objective&quot;  &quot;isolation&quot; 
+##  [6] &quot;clusinfo&quot;   &quot;silinfo&quot;    &quot;diss&quot;       &quot;call&quot;       &quot;data&quot;</code></pre>
+<pre class="r"><code>HappinessFinal &lt;- Happiness %&gt;% mutate(cluster = as.factor(pam1$clustering))
+
+ggplot(HappinessFinal, aes(x = Family, y = `Economy (GDP per Capita)`, 
+    color = cluster)) + geom_point() + scale_x_continuous(lim = c(0, 
+    2)) + ggtitle(&quot;Cluster Scatterplot&quot;)</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-8-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>HappinessFinal %&gt;% group_by(cluster) %&gt;% summarize_if(is.numeric, 
+    mean, na.rm = T)</code></pre>
+<pre><code>## # A tibble: 2 x 10
+##   cluster `Happiness Rank` `Happiness Scor… `Standard Error` `Economy (GDP p…
+##   &lt;fct&gt;              &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+## 1 1                   52.9             6.02           0.0462            1.12 
+## 2 2                  120.              4.40           0.0504            0.435
+## # … with 5 more variables: Family &lt;dbl&gt;, `Health (Life Expectancy)` &lt;dbl&gt;,
+## #   Freedom &lt;dbl&gt;, `Trust (Government Corruption)` &lt;dbl&gt;, Generosity &lt;dbl&gt;</code></pre>
+<pre class="r"><code>Happiness %&gt;% slice(pam1$id.med)</code></pre>
+<pre><code>## # A tibble: 2 x 11
+##   Country Region `Happiness Rank` `Happiness Scor… `Standard Error`
+##   &lt;chr&gt;   &lt;chr&gt;             &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+## 1 Hungary Centr…              104             4.8            0.0611
+## 2 Maurit… Sub-S…              124             4.44           0.0395
+## # … with 6 more variables: `Economy (GDP per Capita)` &lt;dbl&gt;, Family &lt;dbl&gt;,
+## #   `Health (Life Expectancy)` &lt;dbl&gt;, Freedom &lt;dbl&gt;, `Trust (Government
+## #   Corruption)` &lt;dbl&gt;, Generosity &lt;dbl&gt;</code></pre>
+<pre class="r"><code>pam1$silinfo$avg.width</code></pre>
+<pre><code>## [1] 0.5029267</code></pre>
+<pre class="r"><code>plot(pam1, which = 2)</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-8-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>For my cluster analysis, I used PAM and clustered the following numeric variables from the Happiness dataset: Family, Health (Life Expectancy), and Economy (GDP per Capita). I chose these variables based on the additional analysis conduced with the correlation heatmap. I initially wanted to use the variables that I grouped together when previously untidying my data into a column named &quot;Social Based Measures&quot;; however, the Generosity variable did not seem to be strong for comparative analysis. After deciding on these three numeric variables I determined the number of clusters I was going to use with the help of a silhouette plot. In the silhouette plot, as can be seen above, the highest point in the plot was at the k value of 2. Hence, this is the number of clusters that I used in PAM. The cluster scatterplot that I created showed some interesting results. Here we have two clusters that are somewhat distinct but have some overlap near the Family score and Economy (GDP per capita) score values of 0.75-1. When completing this analysis it would be ideal to have two distinct clusters that vary from one another, and have little variation within their respective clusters. In the cluster scatterplot above we have two clusters that are neither tightly compact as clusters nor clearly distinct from one another as there is overlap as previously mentioned. Interestly, after looking at the cluster scatterplot I computed the average silhoette width. Doing so yielded a value of approximately 0.5, which indicates that the structure is weak and could be artificial. This conclusion aligns and is in accord with the conclusions previously made when analyzing the the visual representation seen in the cluster scatterplot. A score of 0.5, however, is just on the border of being an average silhouette width that indicates that a reasonable structure has been found (0.51-0.70). This seems logical because the cluster scatterplot is fairly ambiguous in terms of firmly concluding that there is an overlapp between the two clusters and if the clusters are distinct enough to indicate a reasonable structure.</p>
+</div>
+
+            
+        <hr>         <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div> 
+            </div>
+          </div>
+
+   <hr>  <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div> 
+        </div>
+      </div>
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../../js/docs.min.js"></script>
+<script src="../../js/main.js"></script>
+
+<script src="../../js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

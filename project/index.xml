@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Projects on Purvee Patel</title>
+    <link>/project/</link>
+    <description>Recent content in Projects on Purvee Patel</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Wed, 25 Nov 2020 00:00:00 +0000</lastBuildDate><atom:link href="/project/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Project 2: Modeling, Testing, and Predicting</title>
+      <link>/project/project2/</link>
+      <pubDate>Wed, 25 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/project/project2/</guid>
+      <description>Modeling 0. Introduction (5 pts) library(dplyr) library(tidyverse) library(ggplot2) library(sandwich) library(lmtest) library(glmnet) library(vegan) Heart &amp;lt;- read.csv(&amp;quot;heart.csv&amp;quot;) Heart &amp;lt;- Heart %&amp;gt;% mutate(thalrevised = case_when(thal==1 ~ &amp;quot;normal&amp;quot;, thal==2 ~ &amp;quot;fixed defect&amp;quot;, thal==3 ~ &amp;quot;reversable defect&amp;quot;)) #create categorical variable from original thal variable Heart &amp;lt;- Heart %&amp;gt;% na.omit() #remove any potential NA values Heart &amp;lt;- Heart[-c(2:3, 6:7, 9, 11:13)] #remove unneeded variables This dataset contains data collected to look at the presence of heart disease in the observed patients across the following four databases: Cleveland, Hungary, Switzerland, and Long Beach V.</description>
+    </item>
+    
+    <item>
+      <title>Project 1: Exploratory Data Analysis on World Happiness Report Data</title>
+      <link>/project/project1/</link>
+      <pubDate>Wed, 28 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/project/project1/</guid>
+      <description>0. Introduction (4 pts) My chosen dataset yields from the World Happiness Report of 2015 as found on Kaggle. The World Happiness Report is used by experts in a variety of fields to look at how well being can be evaluated as a measure to analyze the progress of countries. The original variables included in this specific dataset are: Country, Region, Happiness Rank, Happiness Score, Standard Error, Economy (GDP per Capita), Family, Health (Life Expectancy), Trust (Government Corruption), Generosity, and Dystopia Residual.</description>
+    </item>
+    
+  </channel>
+</rss>
