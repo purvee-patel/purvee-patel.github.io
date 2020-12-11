@@ -7,7 +7,7 @@
     <meta name="author" content="Purvee Patel" />
     
     <link rel="shortcut icon" type="image/x-icon" href="../../../../../img/favicon.ico">
-    <title>Test Post</title>
+    <title>Working with R and Python</title>
     <meta name="generator" content="Hugo 0.79.0" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="../../../../../css/main.css" />
@@ -54,7 +54,7 @@
       <div class="container">
         <div class="blog-post">
           <h3>
-            <strong><a href="../../../../../post/2020/12/02/test-post/">Test Post</a></strong>
+            <strong><a href="../../../../../post/2020/12/02/working-with-r-and-python/">Working with R and Python</a></strong>
           </h3>
         </div>
  
@@ -76,29 +76,26 @@
 <h1>Looking at Earthquake Data using R and Python</h1>
 <p>Fun Fact: I visited Fiji when I was 4 and have been dying to go back ever since! I have extended family who lives there and an aunt who grew up there when she was young after moving from India. All of the pictures I have from this trip are on old film or physically printed so here's a picture of this beautiful place that I found online.</p>
 <center>
-<img src="../../../../../post/2020-12-02-test-post_files/FijiPicforSite.png" />
+<img src="../../../../../post/2020-12-02-working-with-r-and-python_files/CroppedFiji.png" style="width:80.0%" />
 </center>
 <div id="taking-a-look-at-the-code" class="section level2">
 <h2>Taking a Look at the Code</h2>
-<p>Let's look at some data on earthquakes near Fiji from the dataset &quot;quakes&quot;. This dataset contains the variables of latitude, longitude, depth, magnitude, and number of stations that report seismic activity. Notice below that we can use R and Python to work with and analyze some of this data. Below I'm going to read in the dataset with R and then use Python to find the mean and median values for the variables of depth and number of stations.</p>
+<p>This semester in my Computational Biology class we learned how to work in both R and Python. Now you make think that you always have to work with these separately. But we can use them together. Let's look at some data on earthquakes near Fiji from the dataset &quot;quakes&quot; to demonstrate this. This dataset contains the variables of latitude, longitude, depth, magnitude, and number of stations that report seismic activity. Now let's use both R and Python to work with and analyze some of this data. Below I'm going to read in the dataset with R and then use Python to find the mean and median values for the variables of depth and number of stations.</p>
 <pre class="r"><code>fijidata &lt;- quakes</code></pre>
 <pre class="python"><code>r.fijidata.depth.mean()</code></pre>
 <pre><code>## 311.37099999999998</code></pre>
 <pre class="python"><code>r.fijidata.depth.median()</code></pre>
 <pre><code>## 247.0</code></pre>
-<center>
-<img src="../../../../../post/2020-12-02-test-post_files/FijiMap.png" style="width:80.0%" />
-</center>
 </div>
-<div id="can-you-use-r-and-python-together" class="section level2">
-<h2>Can you use R and Python together?</h2>
-<p>This semester in my Computational Biology class we learned how to work in both R and Python. Now you make think that you always have to work with these separately. Well what if I told you that you could always use them together? The way in which we can do this is by using reticulate! Here's a brief example to show you how this can work</p>
+</div>
+<div id="is-there-another-way-that-you-can-use-r-and-python-together-in-r-studio" class="section level1">
+<h1>Is there another way that you can use R and Python together in R Studio?</h1>
+<p>Yes there is! We can do this is by using reticulate! I've included a brief example to show you how this can work.</p>
 <pre class="r"><code>library(reticulate)
 partone&lt;-&quot;Fiji is&quot;</code></pre>
 <pre class="python"><code>parttwo=&quot;so pretty.&quot;
 print(r.partone,parttwo)</code></pre>
 <pre><code>## Fiji is so pretty.</code></pre>
-</div>
 </div>
 
             
