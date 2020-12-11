@@ -97,8 +97,8 @@ glimpse(Happiness)</code></pre>
 ## $ `Dystopia Residual`             &lt;dbl&gt; 2.51738, 2.70201, 2.49204, 2.46531, 2…</code></pre>
 <pre class="r"><code>Happiness &lt;- Happiness[-12]</code></pre>
 </div>
-<div id="tidying-rearranging-widelong-8-pts" class="section level4">
-<h4>1. Tidying: Rearranging Wide/Long (8 pts)</h4>
+<div id="tidying-rearranging-widelong" class="section level4">
+<h4>1. Tidying: Rearranging Wide/Long</h4>
 <pre class="r"><code>Happiness_Untidy &lt;- Happiness %&gt;% pivot_longer(c(&quot;Family&quot;, &quot;Freedom&quot;, 
     &quot;Generosity&quot;), names_to = &quot;Social Based Measures&quot;, values_to = &quot;Value&quot;)
 glimpse(Happiness_Untidy)</code></pre>
@@ -132,8 +132,8 @@ glimpse(Happiness_Tidy)</code></pre>
 ## $ Generosity                      &lt;dbl&gt; 0.29678, 0.43630, 0.34139, 0.34699, 0…</code></pre>
 <p>Here, I used the function <code>pivot_longer</code> to create a column named &quot;Social Based Measures&quot; using the variables Family, Freedom, and Generosity, creating a chr (character) variable. I took the values of these three variables and created an additional column that assigned their respecitve values to each variable in the &quot;Social Based Measure&quot; column. In doing so, I made the original Happiness dataset, which was tidy, untidy. To retidy the data, I used <code>pivot_wider</code> to return the untidy dataset to a format in which the three variables of Family, Freedom, and Generosity were returned to their original column form with their respective values for each of the 158 countries included in this dataset. In tidying the data, I used the function <code>pivot_wider</code> to reshape the dataset so that every observation has its own row and every variable its own column.</p>
 </div>
-<div id="joiningmerging-8-pts" class="section level4">
-<h4>2. Joining/Merging (8 pts)</h4>
+<div id="joiningmerging" class="section level4">
+<h4>2. Joining/Merging</h4>
 <pre class="r"><code>Happiness %&gt;% summarize_all(function(x) sum(is.na(x)))</code></pre>
 <pre><code>## # A tibble: 1 x 11
 ##   Country Region `Happiness Rank` `Happiness Scor… `Standard Error`
@@ -179,8 +179,8 @@ glimpse(fulldataset)</code></pre>
 ## $ Generosity                      &lt;dbl&gt; 0.29678, 0.43630, 0.34139, 0.34699, 0…</code></pre>
 <p>In this section I divided my complete dataset (Happiness) into two smaller datasets named datasetpart1 and datasetpart2 respectively with the common ID variable of Country. I used a full_join() here to combine/join the smaller datasets back together by the common ID variable of Country. I knew that there were no observations missing as I checked for missing/NA values in the full Happiness dataset prior to splitting it in two. From this we know that each Country was assigned a region and had a value recorded for the variables Happiness Rank, Happiness Score, Standard Error, Economy (GDP per Capita), Family, Health (Life Expectancy), Freedom, Trust (Government Corruption), and Generosity. I used a full_join because it keeps all of the rows from both of the datasets that I created and inserts an NA where there is missing information. I knew, however, as mentioned before that there would be no concern with NAs in joining these datasets as there was no missing information present in either. Further, we can conclude from this that there were no cases dropped when using the full_join to join datasetpart1 and datasetpart2. Using a full join yielded a full dataset (labeled &quot;fulldataset&quot;) that contained as much information as possible from each Country. Lastly, there were 158 observations in each column in datasetpart1, datasetpart2, and fulldataset. Datasetpart1 had 6 columns, datasetpart2 had 6 columns, and the joined dataset (fulldataset) had 11 columns.</p>
 </div>
-<div id="wrangling-40-pts" class="section level4">
-<h4>3. Wrangling (40 pts)</h4>
+<div id="wrangling" class="section level4">
+<h4>3. Wrangling</h4>
 <pre class="r"><code>Happiness %&gt;% summarize_if(is.numeric, c(mean = mean, min = min, 
     max = max, n_distinct = n_distinct)) %&gt;% pivot_longer(contains(&quot;_&quot;))</code></pre>
 <pre><code>## # A tibble: 36 x 2
@@ -275,8 +275,8 @@ glimpse(fulldataset)</code></pre>
 <p>In this section I began wrangling by using the summarize_if function to create summary statistics for my numeric variables before grouping. In doing so I used the summary statistics of mean, minimum, maximum, and n_distinct. I followed this by using <code>pivot_longer</code> to organize the table. I then grouped the data by the variable of Region and used the same summary statistics of mean, minimum, maximum, and n_distinct on each of the numeric variables. I again used <code>pivot_longer</code> to organize this table of data. I was intrigued by the variable of Happiness Score and wanted to further explore this variable. I found the median Happiness Score of the variable's observations and used the mutate function along with ifelse to dichotomize a numeric variable to create a categorical variable of high and low Happiness Scores in a new variable named Grouping.Var. The “high” group contained values above the median Happiness Score while the “low” group contained values below the median Happiness Score. After this, I ran summary statistics of mean, minimum, maximum, and n_distinctonce again. In doing so I noted that the variables that showed the greatest differences in scores between the high and low groups were average Economy (GDP per capita), Family, Health, and Freedom.</p>
 <p>When looking at the results of the above analyses I noticed that the region of Australia and New Zealand had the highest mean happiness scores, while countries from the region of Sub-Saharan Africa had the lowest mean happiness scores. To look further into this I filtered the dataset at large by each of these regions respectively and arranged them based on happiness rank in descending order. Another interesting observation was that there were 40 countries in the Sub-Saharan Africa region, and 34 of those 40 countries fell in the lowest third of countries based on happiness rank. In other words out of the 40 countries in this dataset from Sub-Saharan Africa, there were 36 countries that fell between the 100-158 ranks in the Happiness Rank variable.</p>
 </div>
-<div id="visualizing-30-pts" class="section level4">
-<h4>4. Visualizing (30 pts)</h4>
+<div id="visualizing" class="section level4">
+<h4>4. Visualizing</h4>
 <pre class="r"><code>ggplot(Happiness, aes(x = `Economy (GDP per Capita)`, y = `Happiness Score`, 
     color = Region)) + geom_point() + scale_x_continuous(lim = c(0, 
     2), breaks = seq(0, 2, 0.5)) + scale_y_continuous(lim = c(4, 
@@ -304,8 +304,8 @@ glimpse(fulldataset)</code></pre>
 <p><img src="../../project/project1_files/figure-html/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>As per my previous interest in the relationship between the variables Economy (GDP per capita) and Trust (Government Corruption), there infact is a low strength of correlation between these two variables with a correlation value of 0.31. On the other hand, the relationship between the variables of Economy (GDP per capita) and Health (Life Expectancy) have a strong correlation value of 0.82, as does the Economy (GDP per capita) variable with Happiness Scores with a correlation value of 0.78. Another notably strong correlation is seen between the variables of Happiness Score and Family with a correlation value of 0.74. Contrastly, the variables of Generosity and Economy (GDP per capita) have the weakest correlation of any combination of variables in the heatmap at a value of -0.01. Additionally, the variable of Generosity has a weak correlation with the variable of Family resulting in a correlation value of 0.09. Further, it can be seen in the heatmap above that the variable of Generosity at large has very weak correlations with all other numeric variables in the Happiness dataset. The variable of Trust (Government Corruption) also has fairly weak correlations with the other numeric variables, but not to the extent that the variable of Generosity does.</p>
 </div>
-<div id="dimensionality-reduction-20-pts" class="section level4">
-<h4>5. Dimensionality Reduction (20 pts)</h4>
+<div id="dimensionality-reduction" class="section level4">
+<h4>5. Dimensionality Reduction</h4>
 <pre class="r"><code>library(cluster)
 pam_data &lt;- Happiness %&gt;% select(Family, `Health (Life Expectancy)`, 
     `Economy (GDP per Capita)`)

@@ -32,7 +32,7 @@ glimpse(Happiness)
 Happiness <- Happiness[-12]
 ```
 
-#### 1. Tidying: Rearranging Wide/Long (8 pts)
+#### 1. Tidying: Rearranging Wide/Long
 
 ```{R}
 Happiness %>% pivot_longer(c("Family", "Freedom", "Generosity"), names_to="Social Based Measures", values_to="Value") -> Happiness_Untidy
@@ -43,7 +43,7 @@ glimpse(Happiness_Tidy)
 
 Here, I used the function `pivot_longer` to create a column named "Social Based Measures" using the variables Family, Freedom, and Generosity, creating a chr (character) variable. I took the values of these three variables and created an additional column that assigned their respecitve values to each variable in the "Social Based Measure" column. In doing so, I made the original Happiness dataset, which was tidy, untidy. To retidy the data, I used `pivot_wider` to return the untidy dataset to a format in which the three variables of Family, Freedom, and Generosity were returned to their original column form with their respective values for each of the 158 countries included in this dataset. In tidying the data, I used the function `pivot_wider` to reshape the dataset so that every observation has its own row and every variable its own column.  
 
-#### 2. Joining/Merging (8 pts)
+#### 2. Joining/Merging
 
 ```{R}
 Happiness %>% summarize_all(function(x)sum(is.na(x)))
@@ -57,7 +57,7 @@ glimpse(fulldataset)
 
 In this section I divided my complete dataset (Happiness) into two smaller datasets named datasetpart1 and datasetpart2 respectively with the common ID variable of Country. I used a full_join() here to combine/join the smaller datasets back together by the common ID variable of Country. I knew that there were no observations missing as I checked for missing/NA values in the full Happiness dataset prior to splitting it in two. From this we know that each Country was assigned a region and had a value recorded for the variables Happiness Rank, Happiness Score, Standard Error, Economy (GDP per Capita), Family, Health (Life Expectancy), Freedom, Trust (Government Corruption), and Generosity. I used a full_join because it keeps all of the rows from both of the datasets that I created and inserts an NA where there is missing information. I knew, however, as mentioned before that there would be no concern with NAs in joining these datasets as there was no missing information present in either. Further, we can conclude from this that there were no cases dropped when using the full_join to join datasetpart1 and datasetpart2. Using a full join yielded a full dataset (labeled "fulldataset") that contained as much information as possible from each Country. Lastly, there were 158 observations in each column in datasetpart1, datasetpart2, and fulldataset. Datasetpart1 had 6 columns, datasetpart2 had 6 columns, and the joined dataset (fulldataset) had 11 columns.
 
-#### 3. Wrangling (40 pts)
+#### 3. Wrangling
     
 ```{R}
 Happiness %>% summarize_if(is.numeric, c(mean=mean, min=min, max=max, n_distinct=n_distinct)) %>% pivot_longer(contains("_"))
@@ -78,7 +78,7 @@ In this section I began wrangling by using the summarize_if function to create s
 When looking at the results of the above analyses I noticed that the region of Australia and New Zealand had the highest mean happiness scores, while countries from the region of Sub-Saharan Africa had the lowest mean happiness scores. To look further into this I filtered the dataset at large by each of these regions respectively and arranged them based on happiness rank in descending order. Another interesting observation was that there were 40 countries in the Sub-Saharan Africa region, and 34 of those 40 countries fell in the lowest third of countries based on happiness rank. In other words out of the 40 countries in this dataset from Sub-Saharan Africa, there were 36 countries that fell between the 100-158 ranks in the Happiness Rank variable.
 
 
-#### 4. Visualizing (30 pts)
+#### 4. Visualizing
 
 ```{R}
 ggplot(Happiness, aes(x= `Economy (GDP per Capita)`, y= `Happiness Score`, color= Region))+ geom_point() + scale_x_continuous(lim=c(0,2),breaks=seq(0, 2, 0.5) ) + scale_y_continuous(lim=c(4,8),breaks=seq(4, 8, 0.5)) + labs(x= "Economy (GDP per capita)", y="Happiness Score") + ggtitle("Happiness Scores Based on Economy") + theme_gray() 
@@ -102,7 +102,7 @@ theme(axis.text.x = element_text(angle = 45, hjust=1)) + ggtitle("Correlation He
     
 As per my previous interest in the relationship between the variables Economy (GDP per capita) and Trust (Government Corruption), there infact is a low strength of correlation between these two variables with a correlation value of 0.31. On the other hand, the relationship between the variables of Economy (GDP per capita) and Health (Life Expectancy) have a strong correlation value of 0.82, as does the Economy (GDP per capita) variable with Happiness Scores with a correlation value of 0.78. Another notably strong correlation is seen between the variables of Happiness Score and Family with a correlation value of 0.74. Contrastly, the variables of Generosity and Economy (GDP per capita) have the weakest correlation  of any combination of variables in the heatmap at a value of -0.01. Additionally, the variable of Generosity has a weak correlation with the variable of Family resulting in a correlation value of 0.09. Further, it can be seen in the heatmap above that the variable of Generosity at large has very weak correlations with all other numeric variables in the Happiness dataset. The variable of Trust (Government Corruption) also has fairly weak correlations with the other numeric variables, but not to the extent that the variable of Generosity does.
     
-#### 5. Dimensionality Reduction (20 pts)
+#### 5. Dimensionality Reduction
 
 ```{R}
 library(cluster)
@@ -130,8 +130,3 @@ plot(pam1,which=2)
 ```
 
 For my cluster analysis, I used PAM and clustered the following numeric variables from the Happiness dataset: Family, Health (Life Expectancy), and Economy (GDP per Capita). I chose these variables based on the additional analysis conduced with the correlation heatmap. I initially wanted to use the variables that I grouped together when previously untidying my data into a column named "Social Based Measures"; however, the Generosity variable did not seem to be strong for comparative analysis. After deciding on these three numeric variables I determined the number of clusters I was going to use with the help of a silhouette plot. In the silhouette plot, as can be seen above, the highest point in the plot was at the k value of 2. Hence, this is the number of clusters that I used in PAM. The cluster scatterplot that I created showed some interesting results. Here we have two clusters that are somewhat distinct but have some overlap near the Family score and Economy (GDP per capita) score values of 0.75-1. When completing this analysis it would be ideal to have two distinct clusters that vary from one another, and have little variation within their respective clusters. In the cluster scatterplot above we have two clusters that are neither tightly compact as clusters nor clearly distinct from one another as there is overlap as previously mentioned. Interestly, after looking at the cluster scatterplot I computed the average silhoette width. Doing so yielded a value of approximately 0.5, which indicates that the structure is weak and could be artificial. This conclusion aligns and is in accord with the conclusions previously made when analyzing the the visual representation seen in the cluster scatterplot. A score of 0.5, however, is just on the border of being an average silhouette width that indicates that a reasonable structure has been found (0.51-0.70). This seems logical because the cluster scatterplot is fairly ambiguous in terms of firmly concluding that there is an overlapp between the two clusters and if the clusters are distinct enough to indicate a reasonable structure.
-
-
-
-
-
