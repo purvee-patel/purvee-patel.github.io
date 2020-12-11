@@ -31,7 +31,7 @@
       <pubDate>Wed, 28 Oct 2020 00:00:00 +0000</pubDate>
       
       <guid>/project/project1/</guid>
-      <description>0. Introduction (4 pts) My chosen dataset yields from the World Happiness Report of 2015 as found on Kaggle. The World Happiness Report is used by experts in a variety of fields to look at how well being can be evaluated as a measure to analyze the progress of countries. The original variables included in this specific dataset are: Country, Region, Happiness Rank, Happiness Score, Standard Error, Economy (GDP per Capita), Family, Health (Life Expectancy), Trust (Government Corruption), Generosity, and Dystopia Residual.</description>
+      <description>0. Introduction My chosen dataset yields from the World Happiness Report of 2015 as found on Kaggle. The World Happiness Report is used by experts in a variety of fields to look at how well being can be evaluated as a measure to analyze the progress of countries. The original variables included in this specific dataset are: Country, Region, Happiness Rank, Happiness Score, Standard Error, Economy (GDP per Capita), Family, Health (Life Expectancy), Trust (Government Corruption), Generosity, and Dystopia Residual.</description>
     </item>
     
     <item>
