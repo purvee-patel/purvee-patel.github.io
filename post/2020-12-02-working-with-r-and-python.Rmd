@@ -7,7 +7,7 @@ categories: []
 tags: []
 description: ''
 ---
-##Looking at Earthquake Data using R and Python
+###Looking at Earthquake Data using R and Python
 
 Fun Fact: I visited Fiji when I was 4 and have been dying to go back ever since! I have extended family who lives there and an aunt who grew up there when she was young after moving from India. All of the pictures I have from this trip are on old film or physically printed so here's a picture of this beautiful place that I found online. 
 
@@ -34,7 +34,7 @@ r.fijidata.depth.median()
 
 <br>
 
-## Is there another way that you can use R and Python together in R Studio?
+###Is there another way that you can use R and Python together in R Studio?
 
 Yes there is! We can do this is by using reticulate! I've included a brief example to show you how this can work.
 
