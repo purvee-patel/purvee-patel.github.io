@@ -7,9 +7,9 @@ categories: []
 tags: []
 description: ''
 ---
-###Looking at Earthquake Data using R and Python
+###Looking at Earthquake Data Near Fiji using R and Python
 
-Fun Fact: I visited Fiji when I was 4 and have been dying to go back ever since! I have extended family who lives there and an aunt who grew up there when she was young after moving from India. All of the pictures I have from this trip are on old film or physically printed so here's a picture of this beautiful place that I found online. 
+Fun Fact: I visited Fiji when I was 4 and have been dying to go back ever since! I have extended family who lives there and an aunt who grew up there when she was young after moving from India. All of the pictures I have from this trip are on old film or physically printed, so here's a picture of this beautiful country that I found online. 
 
 <br>
 
@@ -20,7 +20,7 @@ Fun Fact: I visited Fiji when I was 4 and have been dying to go back ever since!
 <br>
 
 ###Taking a Look at the Code
-This semester in my Computational Biology class we learned how to work in both R and Python. Now you make think that you always have to work with these separately. But we can use them together. Let's look at some data on earthquakes near Fiji from the dataset "quakes" to demonstrate this. This dataset contains the variables of latitude, longitude, depth, magnitude, and number of stations that report seismic activity. Now let's use both R and Python to work with and analyze some of this data. Below I'm going to read in the dataset with R and then use Python to find the mean and median values for the variables of depth and number of stations.
+This semester in my computational biology class we learned how to work in both R and Python. Now you make think that you always have to work with these separately. However, we've learned that we can use them together! Let's look at some data on earthquakes near Fiji from the dataset "quakes" to demonstrate this. This dataset contains the variables of latitude, longitude, depth, magnitude, and number of stations that report seismic activity. Now let's use both R and Python to work with and analyze some of this data. In the code below, I'm going to read in the dataset using R and name it "fijidata" and then use Python to find the mean and median values for the variable of depth.
 
 
 ```{R}
@@ -36,7 +36,7 @@ r.fijidata.depth.median()
 
 ###Is there another way that you can use R and Python together in R Studio?
 
-Yes there is! We can do this is by using reticulate! I've included a brief example to show you how this can work.
+Yes there is! We can do this is by using reticulate. To show how this works, I've included an example an example below. The first chunk (in which I've included the reticulate package below) is an R code chunk, while the second chunk below is a Python code chunk.
 
 ```{R}
 library(reticulate)
