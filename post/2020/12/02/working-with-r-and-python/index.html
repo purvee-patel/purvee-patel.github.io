@@ -83,7 +83,7 @@
 </div>
 <div id="taking-a-look-at-the-code" class="section level3">
 <h3>Taking a Look at the Code</h3>
-<p>This semester in my computational biology class we learned how to work in both R and Python. Now you make think that you always have to work with these separately. However, we've learned that we can use them together! Let's look at some data on earthquakes near Fiji from the dataset &quot;quakes&quot; to demonstrate this. This dataset contains the variables of latitude, longitude, depth, magnitude, and number of stations that report seismic activity. Now let's use both R and Python to work with and analyze some of this data. In the code below, I'm going to read in the dataset using R and name it &quot;fijidata&quot; and then use Python to find the mean and median values for the variable of depth.</p>
+<p>This semester in my computational biology class we learned how to work in both R and Python. Now you may think that you always have to work with these separately; however, we've learned that we can use them together! Let's look at some data on earthquakes near Fiji from the dataset &quot;quakes&quot; to demonstrate this. This dataset contains the variables of latitude, longitude, depth, magnitude, and number of stations that report seismic activity. Now let's use both R and Python to work with and analyze some of this data. In the code below, I'm going to read in the dataset using R and name it &quot;fijidata&quot; and then use Python to find the mean and median values for the variable of depth.</p>
 <pre class="r"><code>fijidata &lt;- quakes</code></pre>
 <pre class="python"><code>r.fijidata.depth.mean()</code></pre>
 <pre><code>## 311.37099999999998</code></pre>
@@ -93,7 +93,7 @@
 </div>
 <div id="is-there-another-way-that-you-can-use-r-and-python-together-in-r-studio" class="section level3">
 <h3>Is there another way that you can use R and Python together in R Studio?</h3>
-<p>Yes there is! We can do this is by using reticulate. To show how this works, I've included an example an example below. The first chunk (in which I've included the reticulate package below) is an R code chunk, while the second chunk below is a Python code chunk.</p>
+<p>Yes there is! We can do this is by using reticulate. To show you how this works, I've included an example below. The first chunk (in which I've included the reticulate package below) is an R code chunk, while the second chunk below is a Python code chunk.</p>
 <pre class="r"><code>library(reticulate)
 partone&lt;-&quot;Fiji is&quot;</code></pre>
 <pre class="python"><code>parttwo=&quot;so pretty.&quot;
