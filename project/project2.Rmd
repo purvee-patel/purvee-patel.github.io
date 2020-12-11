@@ -29,9 +29,7 @@ options(tibble.width = 100,width = 100)
 library(tidyverse)
 ```
 
-# Modeling
-
-## 0. Introduction (5 pts)
+#### 0. Introduction
 
 ```{R}
 library(dplyr) 
@@ -52,7 +50,7 @@ Heart <- Heart[-c(2:3, 6:7, 9, 11:13)] #remove unneeded variables
 
 *This dataset contains data collected to look at the presence of heart disease in the observed patients across the following four databases: Cleveland, Hungary, Switzerland, and Long Beach V. There are originally 1025 total observations and 14 variables in this dataset. I removed the following variables from the original dataset as I wanted to work with a smaller, more concise group of variables that I was curious about: sex, cp(type of chest pain), fbs(fasting blood sugar above or below 120 mg/dl), restecg(resting electrocardiographic results with values 0,1,2), exang(exercised induced angina), slope(slope of the peak exercise ST segment), ca(number of major vessels, 0-3, colored by florouscopy). Further, I excluded these deleted variables as I did not find them all sufficiently necessary to include in order to complete the analyses below. The original dataset did not contain a categorical variable and so I created a new variable based on the original variable of "thal" called "thalrevised", which is a categorical variable with the original value of 1 from "thal" attributed to "normal", 2 from "thal" attributed to "fixed defect", and 3 of "thal" attributed to "reversable defect". With the addition of this new categorical variable the Heart dataset that is used below contains the following 7 variables: age, trestbps(resting blood pressure), chol (serum cholesterol in mg/dl), thalach (maximum heart rate achieved), oldpeak(ST depression induced by exervise), target(presence of heart disease in the patient), and thalrevised. Target is a binary variable in which the value of 0 is attributed to "no disease" and the value of 1 is attribtued to "disease". Next, I ran code to remove any potential NA values, which left me with a dataset containing 1018 observations total. Lastly, I find this dataset interesting as it is related to the field of cardiology and contains biological/physiological data and measurements. I enjoy learning about cardiology and it is a relevant field to my family as I have a familial history of heart concerns on my father's side of the family.*
 
-## 1. MANOVA Testing (15 pts)
+#### 1. MANOVA Testing
 ```{R}
 man1<-manova(cbind(trestbps,chol,thalach)~thalrevised, data=Heart)
 summary(man1) #reject the null hypothesis here
@@ -74,7 +72,7 @@ box_m(DVs, group) #assumption with "null=homogeneity of vcov mats assumption met
 
 *I performed 13 tests total (1 MANOVA, 3 ANOVAs, and 9 t tests) with a 0.3697506 type 1 error rate. With the bonferroni correction, the new alpha value is 0.003846154. The MANOVA results (F value of 20.491 and p-value of < 2.2e-16) indicate that significant differences were found among the three effect levels (normal,fixed effect, and reversable effect) for at least one of the dependent variables (trestbps, chol, and thalach). The results of the ANOVA indicate that all three of the response variables have significant differences based on thalrevised (p-value of trestbps = 1.716e-05, p-value of chol = 0.008113, and p-value of thalach is < 2.2e-16). With the new alpha value yielded from the bonferroni correction, the t tests indicate that for trestbps (resting BP) and thalach(maximum heart rate achieved), the effect levels that significantly differed were fixed defect with both normal and reversable defect. For, chol (serum cholesterol) on the other hand, the t tests indicate that with the new alpha value none of the effect levels different significantly. The assumption of multivariate normality for each group is violated as the p-values of all groups are < 0.05. Running Box's M test here yields a p-value of 1.087015e-06, leading us to reject the null. Hence, the homogeneity of vcov mats assumption is violated as well.*
 
-## 2. Randomization Testing (15 pts)
+#### 2. Randomization Testing
 ```{R}
 #Using PERMANOVA
 library(vegan)
@@ -102,7 +100,7 @@ mean(Fs>F_obs) #p-value very small: reject null hypothesis
 
 *The null hypothesis is that for trestbps(resting BP), chol(serum cholesterol), and thalach(maximum heart rate achieved), the means for each thalrevised (effect) are the same. The alternative hypothesis here is that for at least one of these variables, at least one thalrevised (effect) mean is different. The p-value of this PERMANOVA as indicated via both the adonis (p = 0.0001) as well as the handwritten code is very small, indicating that we can reject the null hypothesis.*
     
-## 3. Linear Regression Model (35 pts)
+#### 3. Linear Regression Model
 ```{R}
 Heart$age_c <- Heart$age - mean(Heart$age)
 Heart$trestbps_c <- Heart$trestbps - mean(Heart$trestbps)
@@ -137,7 +135,7 @@ coeftest(fit1, vcov = vcovHC(fit1))
 ```
 *Interpretting this model, for every 1 increase in average age, serum cholesterol increases by 1.04104. Further, for every 1 increase in average resting blood pressure, serum cholesterol increases by 0.29391. When looking at the interaction of age_c:trestbps_c (average age and resting blood pressure), we see a 0.03343 decrease in serum cholesterol. The regression before recomputing regression results with robust standard errors indicates that the following variables explain a sifficiant portion of the variance in serum cholestoral: age, resting blood pressure, and the interaction between age and resting blood pressure. After recomputing regression results with robust standard errors, all of the variables all of the variables were still significant and had p-values smaller than in the regression before robust standard error. Compared to the original model, the SE value for age increased with robust standard error while the SE values for resting blood pressure and the interaction decreased very slightly. The proportion of the variation in serum cholesterol that my model explains is 0.06085.*
 
-## 4. Bootstrapped Standard Errors for Previous Regression Model (5 pts)
+#### 4. Bootstrapped Standard Errors for Previous Regression Model
 ```{R}
 samp_distn <- replicate(5000, {
     bootstrap_dat <- sample_frac(Heart, replace = T)
@@ -149,7 +147,7 @@ samp_distn %>% t %>% as.data.frame %>% summarize_all(sd)
 ```
 *Compared to the original SEs, the bootstrapped standard errors are larger. Compared to the robust SEs, the bootstrapped standard errors are smaller, with the exception of the SE for trestbps_c. The bootstrapped standard error for trestbps_c is 0.08628512, while the robust SE for trestbps_c is 0.085734.*
   
-## 5. Logistic Regression Model Predicting Binary Variable (25 pts)
+#### 5. Logistic Regression Model Predicting Binary Variable
 ```{R}
 fit2 <- glm(target ~ trestbps + chol, data = Heart, family = "binomial")
 summary(fit2)
@@ -203,7 +201,7 @@ calc_auc(ROCplot)
 *In this model, controlling for serum cholesterol (chol), resting blood pressure (trestbps) decreases log-odds of presence of heart disease in the patient (makes it less likely). Further, every one-unit increase in resting blood pressure multiplies odds by 0.9850071. Further, controlling for resting blood pressure (trestbps), the serum cholesterol (chol) decreases log-odds of presence of heart disease in the patient (makes it less likely). Every one-unit increase in serum cholesterol multiples odds by 0.9965926. The accuracy of this model is 0.5569745. The sensitivity of this model is 0.6749522, the specificity of the model is 0.4323232, and the precision of the model is 0.5567823. The AUC of this model is 0.5867837, which based on our rule of thumb is considered bad.* 
 
     
-## 6. Logistic Regression Model Predicting Binary Variable from All Variables (25 pts)
+#### 6. Logistic Regression Model Predicting Binary Variable from All Variables
 ```{R}
 fit3 <- glm(target ~ age + trestbps + chol + thalach + oldpeak + thalrevised, data = Heart, family = "binomial")
 summary(fit3)

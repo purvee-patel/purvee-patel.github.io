@@ -22,7 +22,7 @@
       <pubDate>Wed, 25 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>/project/project2/</guid>
-      <description>Modeling 0. Introduction (5 pts) library(dplyr) library(tidyverse) library(ggplot2) library(sandwich) library(lmtest) library(glmnet) library(vegan) Heart &amp;lt;- read.csv(&amp;quot;heart.csv&amp;quot;) Heart &amp;lt;- Heart %&amp;gt;% mutate(thalrevised = case_when(thal==1 ~ &amp;quot;normal&amp;quot;, thal==2 ~ &amp;quot;fixed defect&amp;quot;, thal==3 ~ &amp;quot;reversable defect&amp;quot;)) #create categorical variable from original thal variable Heart &amp;lt;- Heart %&amp;gt;% na.omit() #remove any potential NA values Heart &amp;lt;- Heart[-c(2:3, 6:7, 9, 11:13)] #remove unneeded variables This dataset contains data collected to look at the presence of heart disease in the observed patients across the following four databases: Cleveland, Hungary, Switzerland, and Long Beach V.</description>
+      <description>0. Introduction library(dplyr) library(tidyverse) library(ggplot2) library(sandwich) library(lmtest) library(glmnet) library(vegan) Heart &amp;lt;- read.csv(&amp;quot;heart.csv&amp;quot;) Heart &amp;lt;- Heart %&amp;gt;% mutate(thalrevised = case_when(thal==1 ~ &amp;quot;normal&amp;quot;, thal==2 ~ &amp;quot;fixed defect&amp;quot;, thal==3 ~ &amp;quot;reversable defect&amp;quot;)) #create categorical variable from original thal variable Heart &amp;lt;- Heart %&amp;gt;% na.omit() #remove any potential NA values Heart &amp;lt;- Heart[-c(2:3, 6:7, 9, 11:13)] #remove unneeded variables This dataset contains data collected to look at the presence of heart disease in the observed patients across the following four databases: Cleveland, Hungary, Switzerland, and Long Beach V.</description>
     </item>
     
     <item>
