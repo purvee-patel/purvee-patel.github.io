@@ -7,3 +7,22 @@ categories: []
 tags: []
 description: ''
 ---
+#Heading of my post!
+
+Content of my post!
+
+## Subheading of my post!
+
+More content
+
+<center>
+![](/post/2020-12-02-test-post_files/FijiMap.png){width=80%}
+</center>
+
+```{R}
+quakes <- quakes
+```
+
+```{python}
+r.quakes.mag.mean()
+```

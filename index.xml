@@ -13,7 +13,9 @@
       <pubDate>Wed, 02 Dec 2020 00:00:00 +0000</pubDate>
       
       <guid>/post/2020/12/02/test-post/</guid>
-      <description></description>
+      <description> Heading of my post! Content of my post!
+Subheading of my post! More content
+  quakes &amp;lt;- quakes r.quakes.mag.mean() ## 4.6204000000000001   </description>
     </item>
     
     <item>
